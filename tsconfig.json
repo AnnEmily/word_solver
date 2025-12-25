@@ -9,13 +9,19 @@
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
-    "target": "esnext",
+    "module": "es2015",
+    "moduleResolution": "bundler", 
+    "target": "es2015",
+    
     "types": [],
     // For nodejs:
     // "lib": ["esnext"],
+    // "lib": ["es2018", "dom"],
     // "types": ["node"],
     // and npm install -D @types/node
+
+    // This is optional but often helps with path resolution
+    "baseUrl": "./",
 
     // Other Outputs
     "sourceMap": true,
@@ -39,6 +45,7 @@
     "noEmit": true, // Tells TypeScript not to generate output files, only perform type checking (your bundler handles the build
     "allowJs": true, // Allow TypeScript to compile .js and .jsx files
     "checkJs": false, // Do not type-check .js files initially
+    "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "jsx": "react-jsx",
