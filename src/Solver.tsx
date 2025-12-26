@@ -1,4 +1,4 @@
-import { useState, type FC } from "react";
+import { useMemo, useState, type FC } from "react";
 import { TopBar } from "./TopBar";
 import { styled } from "@mui/material";
 
@@ -11,8 +11,14 @@ const Container = styled('div')({
 export const Solver: FC<{}> = ({}) => {
   const [darkTheme, setDarkTheme] = useState<boolean>(true);
 
+  const bgColor = useMemo(() => {
+    return ({
+      backgroundColor: darkTheme ? '#1D2226' : 'white',
+    });
+  }, [darkTheme]);
+
   return (
-    <Container>
+    <Container id="solver" sx={bgColor}>
       <TopBar darkTheme={darkTheme} onToggleTheme={() => setDarkTheme(!darkTheme)}/>
     </Container>
   );
