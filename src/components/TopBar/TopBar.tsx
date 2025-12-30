@@ -7,15 +7,12 @@ const Bar = styled('div')({
   justifyContent: 'flex-end',
 });
 
-interface TopBarProps {
-  darkTheme: boolean,
-  onToggleTheme: () => void,
-}
+interface TopBarProps {}
 
-export const TopBar: FC<TopBarProps> = ({ darkTheme, onToggleTheme }) => {
+export const TopBar: FC<TopBarProps> = ({}) => {
   return (
     <Bar id="topbar">
-      <ThemeSelector darkTheme={darkTheme} onToggle={onToggleTheme}/>
+      <ThemeSelector />
     </Bar>
     
   );

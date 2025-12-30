@@ -1,0 +1,72 @@
+#solver {
+  height: 100vh;
+  padding: 8px 16px;
+
+  &.dark {
+    background-color: #1D2226;
+  }
+
+  &.light {
+    background-color: #d0d0d0;
+  }
+}
+
+.panel-title {
+  font-weight: bold;
+  font-size: 1.3rem;
+  margin-bottom: 28px;
+}
+
+.panel {
+  padding: 10px 16px;
+  border-radius: 8px;
+
+  &.dark {
+    background-color: #1D2226;
+    border: 2px solid white;
+    color: white;
+  }
+
+  &.light {
+    background-color: #9c9c9c;
+    border: 2px solid black;
+    color: #202020;
+  }
+}
+
+.game-setting {
+  display: flex;
+  flex-direction: column;
+
+  & .label {
+    font-size: 0.85rem;
+    padding-bottom: 4px;
+  }
+
+  & .MuiInputBase-root {
+    height: 40px;
+    color: #000000;
+    background-color: #dcdcdc;
+    border: 1px solid white;
+
+    & fieldset {
+        border: 0px;
+      }
+  }
+/* 
+  &.dark {
+    & .MuiInputBase-root {
+      color: #000000;
+      background-color: #dcdcdc;
+      border: 1px solid white;
+    }
+  }
+
+  &.light {
+    & .MuiInputBase-root {
+      color: #000000;
+      background-color: #dcdcdc;
+      border: 1px solid white;
+    }
+  } */
+}

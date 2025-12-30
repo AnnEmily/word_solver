@@ -1,11 +1,15 @@
-// import { useState } from 'react'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from './assets/vite.svg'
 import './App.css'
 import Solver from "./Solver";
+import { ThemeProvider } from './shared/hooks/theme-context';
 
 function App() {
-  return (<Solver />);
+  return (
+    <ThemeProvider>
+      <Solver />
+    </ThemeProvider>
+  );
 
   // const [count, setCount] = useState(0)
 
