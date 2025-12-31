@@ -17,7 +17,7 @@ export const getArrayOptions = (src: number[]): JSX.Element[] => {
 
 export const getGameOptions = (field: keyof GameSet): JSX.Element[] => {
   const ColorBadge = ( p: { color: string }) => {
-    return <div style={{ width: '16px', height: '16px', backgroundColor: p.color }} />;
+    return <div className="color-badge" style={{ backgroundColor: p.color }} />;
   };
 
   const shortEntries = games.map(g => ({

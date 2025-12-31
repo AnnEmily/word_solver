@@ -17,6 +17,7 @@ export type GameSet = {
   language: GameLanguage;
   colorSet: GameColors;
   wordLength: number;
+  link: string;
 };
 
 export type LetterColors = {

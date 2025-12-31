@@ -1,10 +1,42 @@
 import { GameSet, LetterColors } from "../shared/types";
 
 export const games: GameSet[] = [
-  { id: 1, name: 'Wordle', language: 'English', country: 'US', colorSet: 'Wordle', wordLength: 5 },
-  { id: 2, name: 'Sutom', language: 'French', country: 'FR', colorSet: 'Sutom', wordLength: null },
-  { id: 3, name: 'La palabra del día', country: 'CO', language: 'Spanish', colorSet: 'Wordle', wordLength: 5 },
-  { id: 4, name: 'Grid Games', language: 'German', country: 'DE', colorSet: 'default', wordLength: 5 },
+  {
+    id: 1,
+    name: 'Wordle',
+    language: 'English',
+    country: 'US',
+    colorSet: 'Wordle',
+    wordLength: 5,
+    link: 'https://www.nytimes.com/games/wordle/index.html',
+  },
+  {
+    id: 2,
+    name: 'Sutom',
+    language: 'French',
+    country: 'FR',
+    colorSet: 'Sutom',
+    wordLength: null,
+    link: 'https://sutom.nocle.fr/#',
+  },
+  {
+    id: 3,
+    name: 'La palabra del día',
+    country: 'CO',
+    language: 'Spanish',
+    colorSet: 'Wordle',
+    wordLength: 5,
+    link: 'https://lapalabradeldia.com/',
+  },
+  {
+    id: 4,
+    name: 'Grid Games',
+    language: 'German',
+    country: 'DE',
+    colorSet: 'default',
+    wordLength: 5,
+    link: 'https://gridgames.app/gridwords/',
+  },
 ];
 
 export const letterColors: LetterColors[] = [
