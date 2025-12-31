@@ -3,12 +3,13 @@ import clsx from "clsx";
 import { MenuItem, Select } from "@mui/material";
 
 import { useTheme } from "../../shared/theme/useTheme";
+import { JSX } from "@emotion/react/jsx-runtime";
 
 interface SettingSelectorProps {
   id: string;
   label: string;
   value: string;
-  options: string[];
+  options: JSX.Element[];
   onSelect: (_value: string) => void;
 }
 
@@ -17,14 +18,10 @@ export const SettingSelector: FC<SettingSelectorProps> = ({ id, label, value, op
   const className = clsx("game-setting", theme)
 
   return (
-    <div id={id} className={className} style={{ minWidth: '180px' }}>
+    <div id={id} className={className} style={{ minWidth: '230px' }}>
       <div className="label">{label}</div>
       <Select name={`select-${id}`} value={value} onChange={e => onSelect(e.target.value)}>
-        {options.map(val => (
-          <MenuItem key={val} value={val}>
-            {val}
-          </MenuItem>
-      ))}
+        {options}
       </Select>
     </div>
     

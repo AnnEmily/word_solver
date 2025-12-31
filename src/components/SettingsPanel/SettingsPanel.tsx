@@ -1,6 +1,6 @@
 import { FC, useMemo, useState } from "react";
-import { uniq } from "lodash";
 
+import { getArrayOptions, getGameOptions } from "./utils";
 import { SettingSelector } from "./SettingSelector";
 import { Panel } from "../../shared/components/Panel";
 import { GameColors, GameLanguage } from "../../shared/types";
@@ -10,23 +10,14 @@ export const SettingsPanel: FC = () => {
   const [provider, setProvider] = useState<string>(null);
   const [language, setLanguage] = useState<GameLanguage>(null);
   const [wordLength, setWordLength] = useState<number>(null);
-  const [colors, setColors] = useState<GameColors>(null);
-
-  const getGameOptions = (field: string) => {
-    return uniq(games.map(g => g[field].toString())).sort();
-  };
-
-  const getArrayOptions = (src: number[]) => {
-    return uniq(src).map(v => v.toString()).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-  };
+  const [colorSet, setColorSet] = useState<GameColors>(null);
 
   const options = useMemo(()=> {
-    // TODO : make sure field names exist
     return ({
       provider: getGameOptions('name'),
       language: getGameOptions('language'),
       wordLength: getArrayOptions(availableWordLengths),
-      colors: getGameOptions('colors'),
+      colors: getGameOptions('colorSet'),
     });
   }, []);
 
@@ -34,7 +25,7 @@ export const SettingsPanel: FC = () => {
     setProvider(val);
     const gameProvider = games.find(g => g.name === val);
     if (gameProvider) {
-      setColors(gameProvider.colors ?? colors);
+      setColorSet(gameProvider.colorSet ?? colorSet);
       setWordLength(gameProvider.wordLength ?? wordLength);
       setLanguage(gameProvider.language ?? language);
     }
@@ -67,9 +58,9 @@ export const SettingsPanel: FC = () => {
         <SettingSelector
           id="colors"
           label="Color Set"
-          value={colors}
+          value={colorSet}
           options={options.colors}
-          onSelect={val => setColors(val as GameColors)}
+          onSelect={val => setColorSet(val as GameColors)}
         />
       </div>
       
