@@ -1,69 +1,77 @@
-import { useMemo, useState, type FC } from "react";
-import { MenuItem, styled } from "@mui/material";
+import { FC, useMemo, useState } from "react";
+import { uniq } from "lodash";
 
 import { SettingSelector } from "./SettingSelector";
-import { GameSet } from "../../shared/types";
 import { Panel } from "../../shared/components/Panel";
-import { games } from "../../shared/constants";
+import { GameColors, GameLanguage } from "../../shared/types";
+import { availableWordLengths, games } from "../../shared/constants";
 
-const Controls = styled('div')({
-  display: 'flex',
-  flexDirection: 'row',
-  gap: '24px',
-});
+export const SettingsPanel: FC = () => {
+  const [provider, setProvider] = useState<string>(null);
+  const [language, setLanguage] = useState<GameLanguage>(null);
+  const [wordLength, setWordLength] = useState<number>(null);
+  const [colors, setColors] = useState<GameColors>(null);
 
-export const SettingsPanel: FC<{}> = ({}) => {
-  const [gameProvider, setGameProvider] = useState<GameSet>(null);
+  const getGameOptions = (field: string) => {
+    return uniq(games.map(g => g[field].toString())).sort();
+  };
 
-  const getOptions = (field: string) => (
-    games.map(g => (
-      <MenuItem key={g.id} value={g.id}>
-        {g[field]}
-      </MenuItem>
-    ))
-  );
+  const getArrayOptions = (src: number[]) => {
+    return uniq(src).map(v => v.toString()).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  };
 
   const options = useMemo(()=> {
+    // TODO : make sure field names exist
     return ({
-      provider: getOptions('provider'),
-      language: getOptions('language'),
-      wordLength: getOptions('wordLength'),
-      colors: getOptions('colors'),
+      provider: getGameOptions('name'),
+      language: getGameOptions('language'),
+      wordLength: getArrayOptions(availableWordLengths),
+      colors: getGameOptions('colors'),
     });
-  }, [games]);
+  }, []);
+
+  const handleChangeProvider = (val: string) => {
+    setProvider(val);
+    const gameProvider = games.find(g => g.name === val);
+    if (gameProvider) {
+      setColors(gameProvider.colors ?? colors);
+      setWordLength(gameProvider.wordLength ?? wordLength);
+      setLanguage(gameProvider.language ?? language);
+    }
+  };
 
   return (
     <Panel id="settings-panel" title={"Settings"}>
-      <Controls>
+      <div className="controls">
         <SettingSelector
           id="provider"
           label="Game"
-          gameProvider={gameProvider}
+          value={provider}
           options={options.provider}
-          onSelect={() => null}
+          onSelect={handleChangeProvider}
         />
         <SettingSelector
           id="dictionary"
-          label="Dictionary"
-          gameProvider={gameProvider}
+          label="Language"
+          value={language}
           options={options.language}
-          onSelect={() => null}
+          onSelect={val => setLanguage(val as GameLanguage)}
         />
         <SettingSelector
           id="word-length"
           label="Word Length"
-          gameProvider={gameProvider}
+          value={wordLength?.toString() ?? ''}
           options={options.wordLength}
-          onSelect={() => null}
+          onSelect={val => setWordLength(Number(val))}
         />
         <SettingSelector
           id="colors"
           label="Color Set"
-          gameProvider={gameProvider}
+          value={colors}
           options={options.colors}
-          onSelect={() => null}
+          onSelect={val => setColors(val as GameColors)}
         />
-      </Controls>
+      </div>
       
     </Panel>
   );

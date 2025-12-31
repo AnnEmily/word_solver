@@ -1,9 +1,10 @@
-import { useMemo, useState, type FC } from "react";
+import { type FC } from "react";
+import clsx from "clsx";
 import { TopBar } from "./components/TopBar";
 import { styled } from "@mui/material";
+
 import SettingsPanel from "./components/SettingsPanel/SettingsPanel";
-import { useTheme } from "./shared/hooks/theme-context";
-import clsx from "clsx";
+import { useTheme } from "./shared/theme/useTheme";
 import './Solver.css';
 
 const Container = styled('div')({
@@ -13,7 +14,7 @@ const Container = styled('div')({
   padding: '8px',
 });
 
-export const Solver: FC<{}> = ({}) => {
+export const Solver: FC = () => {
   const { theme } = useTheme();
   const className = clsx(theme)
 

@@ -2,7 +2,7 @@
 // import viteLogo from './assets/vite.svg'
 import './App.css'
 import Solver from "./Solver";
-import { ThemeProvider } from './shared/hooks/theme-context';
+import { ThemeProvider } from './shared/theme/ThemeProvider';
 
 function App() {
   return (

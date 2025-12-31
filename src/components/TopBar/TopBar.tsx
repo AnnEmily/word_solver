@@ -1,19 +1,11 @@
 import { FC } from 'react';
 import ThemeSelector from "./ThemeSelector";
-import { styled } from '@mui/material';
 
-const Bar = styled('div')({
-  display: 'flex',
-  justifyContent: 'flex-end',
-});
-
-interface TopBarProps {}
-
-export const TopBar: FC<TopBarProps> = ({}) => {
+export const TopBar: FC = () => {
   return (
-    <Bar id="topbar">
+    <div id="topbar" style={{ display: 'flex', justifyContent: 'flex-end' }}>
       <ThemeSelector />
-    </Bar>
+    </div>
     
   );
 };

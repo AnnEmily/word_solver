@@ -1,5 +1,5 @@
 #solver {
-  height: 100vh;
+  height: -webkit-fill-available;
   padding: 8px 16px;
 
   &.dark {
@@ -50,23 +50,16 @@
     border: 1px solid white;
 
     & fieldset {
-        border: 0px;
-      }
-  }
-/* 
-  &.dark {
-    & .MuiInputBase-root {
-      color: #000000;
-      background-color: #dcdcdc;
-      border: 1px solid white;
+      border: 0px;
     }
   }
+}
 
-  &.light {
-    & .MuiInputBase-root {
-      color: #000000;
-      background-color: #dcdcdc;
-      border: 1px solid white;
-    }
-  } */
+#settings-panel {
+  & .controls {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
 }

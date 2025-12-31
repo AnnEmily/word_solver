@@ -3,11 +3,9 @@ import { IconButton } from "@mui/material";
 import DarkModeIcon from "@mui/icons-material/DarkModeTwoTone";
 import LightModeIcon from "@mui/icons-material/LightModeTwoTone";
 
-import { useTheme } from "../../shared/hooks/theme-context";
+import { useTheme } from "../../shared/theme/useTheme";
 
-interface ThemeSelectorProps {}
-
-const ThemeSelector: FC<ThemeSelectorProps> = ({}) => {
+const ThemeSelector: FC = () => {
   const { theme, setTheme} = useTheme();
 
   const handleToggleTheme = () => {

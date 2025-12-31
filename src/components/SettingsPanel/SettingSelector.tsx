@@ -1,27 +1,30 @@
-import { JSX, type FC } from "react";
-import { Select } from "@mui/material";
-
-import { GameSet } from "../../shared/types";
-import { useTheme } from "../../shared/hooks/theme-context";
+import { FC } from "react";
 import clsx from "clsx";
+import { MenuItem, Select } from "@mui/material";
+
+import { useTheme } from "../../shared/theme/useTheme";
 
 interface SettingSelectorProps {
   id: string;
   label: string;
-  gameProvider: GameSet,
-  options: JSX.Element[];
-  onSelect: (providerId: number) => void;
+  value: string;
+  options: string[];
+  onSelect: (_value: string) => void;
 }
 
-export const SettingSelector: FC<SettingSelectorProps> = ({ id, label, gameProvider, options, onSelect }) => {
+export const SettingSelector: FC<SettingSelectorProps> = ({ id, label, value, options, onSelect }) => {
   const { theme } = useTheme();
   const className = clsx("game-setting", theme)
 
   return (
-    <div id={id} className={className} style={{ minWidth: '175px' }}>
+    <div id={id} className={className} style={{ minWidth: '180px' }}>
       <div className="label">{label}</div>
-      <Select value={gameProvider?.id} onChange={(e) => onSelect(Number(e.target.value))}>
-        {options}
+      <Select name={`select-${id}`} value={value} onChange={e => onSelect(e.target.value)}>
+        {options.map(val => (
+          <MenuItem key={val} value={val}>
+            {val}
+          </MenuItem>
+      ))}
       </Select>
     </div>
     

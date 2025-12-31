@@ -1,7 +1,8 @@
 import { ReactNode, type FC } from "react";
-import '../../Solver.css';
 import clsx from "clsx";
-import { useTheme } from "../hooks/theme-context";
+
+import { useTheme } from "../../shared/theme/useTheme";
+import '../../Solver.css';
 
 interface PanelProps {
   id?: string;
