@@ -1,11 +1,10 @@
 import { type FC } from "react";
 import clsx from "clsx";
-import { TopBar } from "./components/TopBar";
 import { styled } from "@mui/material";
 
-import SettingsPanel from "./components/SettingsPanel/SettingsPanel";
-import { useTheme } from "./shared/theme/useTheme";
 import './Solver.css';
+import { useTheme } from "./shared/theme/useTheme";
+import { Keyboard, SettingsPanel, TopBar } from "./components";
 
 const Container = styled('div')({
   display: 'flex',
@@ -22,6 +21,7 @@ export const Solver: FC = () => {
     <Container id="solver" className={className}>
       <TopBar />
       <SettingsPanel />
+      <Keyboard />
     </Container>
   );
 };

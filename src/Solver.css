@@ -81,3 +81,42 @@
     margin-top: 16px;
   }
 }
+
+.keyboard {
+  margin-top: 16px;
+}
+
+.keyrow {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+
+  & .key {
+    border: 1px solid #888;
+    border-radius: 4px;
+    padding: 14px;
+    margin: 0 4px;
+    background-color: #00000000;
+    /* box-shadow: 0 2px #aaa; */
+    user-select: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    text-align: center;
+    width: .3vh;
+    height: 6px;
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    &:active {
+      box-shadow: none;
+      transform: translateY(2px);
+    }
+
+    &:hover {
+      background-color: #ffffff22;
+    }
+  }
+}

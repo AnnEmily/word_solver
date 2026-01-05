@@ -47,11 +47,3 @@ export const letterColors: LetterColors[] = [
 
 // Must match dictionary .js files
 export const availableWordLengths = [4, 5, 6, 7, 8, 9, 10, 11, 12];
-
-// Must match file names in assets directory
-export const countryToFlag = new Map<string, string>([
-  ['US', 'flag_US.png'],
-  ['FR', 'flag_FR.jpg'],
-  ['CO', 'flag_CO.jpg'],
-  ['DE', 'flag_DE.jpg'], 
-]);
