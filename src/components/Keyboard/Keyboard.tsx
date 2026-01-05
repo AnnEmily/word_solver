@@ -7,11 +7,11 @@ import KeyRow from "./KeyRow";
 
 const rowOne = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'];
 const rowTwo = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'];
-const rowThree = ['Z', 'X', 'C', 'V', 'B', 'N', 'M'];
+const rowThree = ['⏎', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '⌫'];
 
 // interface KeyboardProps {
 //   children: ReactNode;
-// }
+// }#343434
 
 export const Keyboard: FC = () => {
   const { theme } = useTheme();

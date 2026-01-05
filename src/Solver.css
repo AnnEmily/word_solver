@@ -94,29 +94,39 @@
   & .key {
     border: 1px solid #888;
     border-radius: 4px;
-    padding: 14px;
     margin: 0 4px;
     background-color: #00000000;
-    /* box-shadow: 0 2px #aaa; */
     user-select: none;
     cursor: pointer;
     font-weight: bold;
     font-size: 1rem;
     text-align: center;
-    width: .3vh;
+    width: .6vh;
     height: 6px;
     display: inline-flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
 
+    /* Default for mobile devices */
+    padding: 11px;
+
+    @media (min-width: 400px) {
+      padding: 14px;
+    }
+
     &:active {
       box-shadow: none;
-      transform: translateY(2px);
+      transform: translateY(2px) translateX(1px);
     }
 
     &:hover {
       background-color: #ffffff22;
     }
+  }
+
+  & .action-key {
+    background: #343434;
+    width: 3vh;
   }
 }

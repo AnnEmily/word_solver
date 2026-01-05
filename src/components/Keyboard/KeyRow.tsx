@@ -1,4 +1,4 @@
-import { ReactNode, type FC } from "react";
+import { type FC } from "react";
 import clsx from "clsx";
 
 import { useTheme } from "../../shared/theme/useTheme";
@@ -15,11 +15,16 @@ export const KeyRow: FC<KeyRowProps> = ({ id, keys }) => {
 
   return (
     <div id={id} className={className}>
-      {keys.map((key) => (
-        <div key={key} className="key">
-          {key}
-        </div>
-      ))}
+      {keys.map((key) => {
+        const isLetter = /^[a-z]$/i.test(key);
+        const keyClass = clsx('key', !isLetter && 'action-key');
+
+        return (
+          <div key={key} className={keyClass}>
+            {key}
+          </div>
+        );
+      })}
     </div>
   );
 };
