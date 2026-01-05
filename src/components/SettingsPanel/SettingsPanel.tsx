@@ -1,14 +1,18 @@
 import { FC, useMemo, useState } from "react";
-import CheckBoxBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import { Checkbox, FormControlLabel } from "@mui/material"
 
-import { getArrayOptions, getGameOptions } from "./utils";
 import { SettingSelector } from "./SettingSelector";
-import { Panel } from "../../shared/components/Panel";
+import { getArrayOptions, getGameOptions } from "./utils";
+import { Panel } from "../../shared/components";
 import { GameColors, GameLanguage } from "../../shared/types";
 import { availableWordLengths, games } from "../../shared/constants";
-import { Checkbox, FormControlLabel } from "@mui/material";
+
 
 export const SettingsPanel: FC = () => {
+  // States for inner control
+  const [isPanelOpen, setIsPanelOpen] = useState<boolean>(true);
+
+  // States to/from children
   const [provider, setProvider] = useState<string>(null);
   const [language, setLanguage] = useState<GameLanguage>(null);
   const [wordLength, setWordLength] = useState<number>(null);
@@ -40,7 +44,7 @@ export const SettingsPanel: FC = () => {
   };
 
   return (
-    <Panel id="settings-panel" title={"Settings"}>
+    <Panel id="settings-panel" title={"Settings"} isOpen={isPanelOpen} onToggle={() => setIsPanelOpen(!isPanelOpen)}>
       <div className="controls">
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
           <SettingSelector
@@ -54,7 +58,6 @@ export const SettingsPanel: FC = () => {
             <Checkbox sx={{ color: '#7e7e7e' }} onChange={() => setOpenGameOnSelection(!openGameOnSelection)} />
           } label="Open game on selection" />
         </div>
-        
 
         <SettingSelector
           id="dictionary"
