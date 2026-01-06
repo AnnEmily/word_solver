@@ -20,12 +20,13 @@ export const WordListPanel: FC = () => {
       const root = '../../dico';
       const dir  = `${language}`;
       const name = `${wordLength.toString().length === 1 ? '0' + wordLength.toString() : wordLength.toString()}`;
-      const dictPath = `${root}/${dir}/${name}`;
+      const dictPath = `${root}/${dir}/${name}.js`;
 
       try {
-        // Dynamic imports are alwys touchy. Disable vite warnings meanwhile we have a real backend.
+        // Dynamic imports are always touchy. Disable vite warnings meanwhile we have a real backend.
         /* @vite-ignore */
-        const { Dictionary } = await import(/* @vite-ignore */ dictPath);
+        // const { Dictionary } = await import(/* @vite-ignore */ dictPath);
+        const { Dictionary } = await import(dictPath);
         dict = Dictionary;
 
       } catch (err) {
