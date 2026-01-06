@@ -134,10 +134,11 @@
 #word-list-panel {
   & .controls {
     margin-top: 12px;
-    margin-bottom: 8px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
+
   }
 
   & .word-list {
