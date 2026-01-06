@@ -9,5 +9,5 @@ export default defineConfig({
   build: {
     outDir: 'docs' // Output build to a folder named 'docs'
   },
-  base: 'word_solver', // add this before refs to assets in final URL
+  base: '/word_solver/', // add this before refs to assets in final URL
 })
