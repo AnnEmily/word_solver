@@ -1,6 +1,8 @@
 import { FC, useEffect, useMemo, useState } from "react";
 import { useShallow } from 'zustand/shallow';
 
+const dictionaries = import.meta.glob('../../dico/*/*.js');
+
 import { Panel } from "../../shared/components";
 import { useSolverStore } from "../../shared/store";
 import { LanguageCode } from "../..//shared/types";
@@ -17,22 +19,55 @@ export const WordListPanel: FC = () => {
   const loadDictionary = async (language: LanguageCode, wordLength: number): Promise<any> => {
       let dict: string[] = [];
 
-      const root = '../../dico';
-      const dir  = `${language}`;
+      // const root = '../../dico';
+      // const dir  = `${language}`;
       const name = `${wordLength.toString().length === 1 ? '0' + wordLength.toString() : wordLength.toString()}`;
-      const dictPath = `${root}/${dir}/${name}.js`;
+      // const dictPath = `${root}/${dir}/${name}.js`;
 
-      try {
-        // Dynamic imports are always touchy. Disable vite warnings meanwhile we have a real backend.
-        /* @vite-ignore */
-        // const { Dictionary } = await import(/* @vite-ignore */ dictPath);
-        const { Dictionary } = await import(dictPath);
-        dict = Dictionary;
+      const dictPath = `../../dico/${language}/${name}.js`;
 
-      } catch (err) {
-        const { message } = err as any;
-        console.error('Error loading dictionary : ' + message);
+      const loader = dictionaries[dictPath];
+      if (!loader) {
+        throw new Error(`Dictionary not found: ${dictPath}`);
       }
+
+      const Dictionary = await loader() as { Dictionary: string[] };
+      dict = Dictionary.Dictionary;
+
+      console.log('Loaded dictionary via glob import: ' + dict);
+
+      // const xx = new URL(`${dictPath}`, import.meta.url).href;
+      // console.log('Loading dictionary from URL: ' + xx);
+
+      // fetch(xx)
+      //   .then(response => {
+      //     if (!response.ok) {
+      //       throw new Error(`HTTP error! status: ${response.status}`);
+      //     }
+      //     return response.text();
+      //   })
+      //   .then(() => {
+      //     // Evaluate the fetched JavaScript code to extract the Dictionary
+      //     const module = { exports: {} as any };
+      //     dict = module.exports.Dictionary;
+      //     console.log(`Fetched dictionary with ${dict.length} words.`);
+      //     setDictionary(dict);
+      //   })
+      //   .catch(error => {
+      //     console.error('Error fetching dictionary:', error);
+      //   });
+
+      // try {
+      //   // Dynamic imports are always touchy. Disable vite warnings meanwhile we have a real backend.
+      //   /* @vite-ignore */
+      //   // const { Dictionary } = await import(/* @vite-ignore */ dictPath);
+      //   const { Dictionary } = await import(dictPath);
+      //   dict = Dictionary;
+
+      // } catch (err) {
+      //   const { message } = err as any;
+      //   console.error('Error loading dictionary : ' + message);
+      // }
   
       return { dict, dictPath };
   }

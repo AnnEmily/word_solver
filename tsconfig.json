@@ -13,7 +13,7 @@
     "moduleResolution": "bundler", 
     "target": "es2015",
     
-    "types": [],
+    "types": ["vite/client"],
     // For nodejs:
     // "lib": ["esnext"],
     // "lib": ["es2018", "dom"],
