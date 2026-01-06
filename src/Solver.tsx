@@ -18,7 +18,7 @@ const Container = styled('div')({
 
 export const Solver: FC = () => {
   // States to/from the store
-  const language = useSolverStore(useShallow(state => state.language));
+  const languageCode = useSolverStore(useShallow(state => state.languageCode));
   const wordLength = useSolverStore(useShallow(state => state.wordLength));
     
   const { theme } = useTheme();
@@ -29,7 +29,7 @@ export const Solver: FC = () => {
       <TopBar />
       <SettingsPanel />
       <Keyboard />
-      {language && wordLength && <WordListPanel />}
+      {languageCode && wordLength !== 0 && <WordListPanel />}
     </Container>
   );
 };

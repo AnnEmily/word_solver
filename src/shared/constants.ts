@@ -4,7 +4,7 @@ export const games: GameSet[] = [
   {
     id: 1,
     name: 'Wordle',
-    language: 'English',
+    languageCode: 'en',
     country: 'US',
     colorSet: 'Wordle',
     wordLength: 5,
@@ -13,7 +13,7 @@ export const games: GameSet[] = [
   {
     id: 2,
     name: 'Sutom',
-    language: 'French',
+    languageCode: 'fr',
     country: 'FR',
     colorSet: 'Sutom',
     wordLength: null,
@@ -23,7 +23,7 @@ export const games: GameSet[] = [
     id: 3,
     name: 'La palabra del día',
     country: 'CO',
-    language: 'Spanish',
+    languageCode: 'es',
     colorSet: 'Wordle',
     wordLength: 5,
     link: 'https://lapalabradeldia.com/',
@@ -31,7 +31,7 @@ export const games: GameSet[] = [
   {
     id: 4,
     name: 'Grid Games',
-    language: 'German',
+    languageCode: 'de',
     country: 'DE',
     colorSet: 'default',
     wordLength: 5,

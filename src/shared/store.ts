@@ -1,23 +1,23 @@
 import { create } from 'zustand'
-import { GameLanguage } from './types';
+import { LanguageCode } from './types';
 
 interface SolverState {
-  language: GameLanguage;
+  languageCode: LanguageCode;
   wordLength: number;
   
   // Actions to update variables
-  setLanguage: (_lang: GameLanguage) => void;
+  setLanguageCode: (_code: LanguageCode) => void;
   setWordLength: (_len: number) => void;
   resetSolver: () => void;
 }
 
 export const useSolverStore = create<SolverState>(set => ({
   // Initial values
-  language: null,
+  languageCode: null,
   wordLength: 0,
 
   // Actions
-  setLanguage: lang => set({ language: lang }),
+  setLanguageCode: code => set({ languageCode: code }),
   setWordLength: len => set({ wordLength: len }),
-  resetSolver: () => set({ language: 'English', wordLength: 0 }),
+  resetSolver: () => set({ languageCode: 'en', wordLength: 0 }),
 }));

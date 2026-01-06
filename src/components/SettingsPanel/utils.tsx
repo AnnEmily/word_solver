@@ -4,7 +4,8 @@ import CountryFlag from "react-country-flag"
 import { MenuItem } from '@mui/material';
 
 import { games, letterColors } from '../../shared/constants';
-import { GameSet } from 'src/shared/types';
+import { LanguageCode, GameSet } from '../../shared/types';
+import { languageCodeToName } from '../../shared/utilsString';
 
 export const getArrayOptions = (src: number[]): JSX.Element[] => {
     const uniqValues = uniq(src).map(v => v.toString()).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
@@ -21,14 +22,15 @@ export const getGameOptions = (field: keyof GameSet): JSX.Element[] => {
   };
 
   const shortEntries = games.map(g => ({
-    field: g[field].toString(),
+    field: field !== 'languageCode' ? g[field].toString() : languageCodeToName(g[field] as LanguageCode),
     country: g.country,
     colorSet: g.colorSet,
   }));
 
-  const uniqEntries = sortBy(uniqBy(shortEntries, 'field'), entry => entry.field.toLowerCase());
-  
-  return uniqEntries.map(entry => {
+  const uniqEntries = uniqBy(shortEntries, 'field');
+  const sortedEntries = sortBy(uniqEntries, entry => entry.field.toLowerCase());
+
+  return sortedEntries.map(entry => {
     let element: ReactNode = entry.field;
 
     if (field === 'name') {

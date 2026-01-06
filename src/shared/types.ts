@@ -1,8 +1,11 @@
 export const GAME_PROVIDERS = ['Wordle','Sutom', 'La palabra del día','Grid Games'] as const;
 export type GameProvider = typeof GAME_PROVIDERS[number];
 
-export const GAME_LANGUAGES = ['English', 'French', 'Spanish', 'German'] as const;
-export type GameLanguage = typeof GAME_LANGUAGES[number];
+export const LANGUAGE_CODES = ['en', 'fr', 'es', 'de'] as const;
+export type LanguageCode = typeof LANGUAGE_CODES[number];
+
+export const LANGUAGE_NAMES = ['English', 'French', 'Spanish', 'German'] as const;
+export type LanguageName = typeof LANGUAGE_NAMES[number];
 
 export const GAME_COLORS = ['Wordle', 'Sutom', 'default'] as const;
 export type GameColors = typeof GAME_COLORS[number];
@@ -14,7 +17,7 @@ export type GameSet = {
   id: number;
   name: GameProvider;
   country: GameCountry;
-  language: GameLanguage;
+  languageCode: LanguageCode;
   colorSet: GameColors;
   wordLength: number;
   link: string;

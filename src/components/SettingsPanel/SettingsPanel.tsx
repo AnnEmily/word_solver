@@ -5,9 +5,10 @@ import { Checkbox, FormControlLabel } from "@mui/material"
 import { SettingSelector } from "./SettingSelector";
 import { getArrayOptions, getGameOptions } from "./utils";
 import { Panel } from "../../shared/components";
-import { GameColors, GameLanguage } from "../../shared/types";
+import { GameColors, LanguageName } from "../../shared/types";
 import { availableWordLengths, games } from "../../shared/constants";
 import { useSolverStore } from "../../shared/store";
+import { languageCodeToName, languageNameToCode } from "../../shared/utilsString";
 
 
 export const SettingsPanel: FC = () => {
@@ -20,13 +21,13 @@ export const SettingsPanel: FC = () => {
   const [openGameOnSelection, setOpenGameOnSelection] = useState<boolean>(false);
 
   // States to/from the store
-  const [language, setLanguage] = useSolverStore(useShallow(state => [state.language, state.setLanguage]));
+  const [languageCode, setLanguageCode] = useSolverStore(useShallow(state => [state.languageCode, state.setLanguageCode]));
   const [wordLength, setWordLength] = useSolverStore(useShallow(state => [state.wordLength, state.setWordLength]));
 
   const options = useMemo(()=> {
     return ({
       provider: getGameOptions('name'),
-      language: getGameOptions('language'),
+      languageName: getGameOptions('languageCode'),
       wordLength: getArrayOptions(availableWordLengths),
       colors: getGameOptions('colorSet'),
     });
@@ -38,7 +39,7 @@ export const SettingsPanel: FC = () => {
     if (gameProvider) {
       setColorSet(gameProvider.colorSet ?? colorSet);
       setWordLength(gameProvider.wordLength ?? wordLength);
-      setLanguage(gameProvider.language ?? language);
+      setLanguageCode(gameProvider.languageCode ?? languageCode);
 
       if (openGameOnSelection) {
         const url = `${gameProvider.link.toLowerCase().replace(/ /g, '')}`;
@@ -66,9 +67,9 @@ export const SettingsPanel: FC = () => {
         <SettingSelector
           id="dictionary"
           label="Language"
-          value={language}
-          options={options.language}
-          onSelect={val => setLanguage(val as GameLanguage)}
+          value={languageCodeToName(languageCode)}
+          options={options.languageName}
+          onSelect={val => setLanguageCode(languageNameToCode(val as LanguageName) )}
         />
         <SettingSelector
           id="word-length"
