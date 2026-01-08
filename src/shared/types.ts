@@ -28,6 +28,8 @@ export type GridCell = {
   status: LetterStatus;
 };
 
+export type Word = GridCell[];
+
 export type GameSet = {
   id: number;
   name: GameProvider;

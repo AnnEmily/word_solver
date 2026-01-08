@@ -9,7 +9,11 @@ import '../../Solver.css';
 
 
 export const Grid: FC = () => {
-  const wordLength = useSolverStore(useShallow(state => state.wordLength));
+  const { grid, word, wordLength } = useSolverStore(useShallow(state => ({
+    grid: state.grid,
+    word: state.word,
+    wordLength: state.wordLength,
+  })));
   
   const { theme } = useTheme();
   const className = clsx('grid', theme)
@@ -18,7 +22,10 @@ export const Grid: FC = () => {
     <Fragment>
       {wordLength !== 0 && (
         <div id="grid" className={className}>
-          <GridRow id="rowOne" />
+          {grid.map((row, index) => {
+            return <GridRow id={`row-${index}`} key={index} isActiveWord={false} word={row} />;
+          })}
+          <GridRow id="activeRow" word={word} />
         </div>
       )}
     </Fragment>

@@ -1,31 +1,38 @@
 import { create } from 'zustand'
-import { GameColors, GridCell, LanguageCode } from './types';
+import { GameColors, GridCell, LanguageCode, Word } from './types';
 import { BACKSPACE, ENTER } from './constants';
 
+const getEmptyWord = (len: number): Word => {
+  return Array(len).fill({ symbol: '', status: undefined});
+};
 
 interface SolverState {
+  // State vars
   languageCode: LanguageCode;
+  colorSet: GameColors;
+
   wordLength: number;
-  letters: GridCell[];
-  selectedKey: string;
-  activeCellIndex: number;
-  allLettersEntered: boolean;
+  word: Word;
   wordConfirmed: boolean;
   statusesConfirmed: boolean;
-  colorSet: GameColors;
-  
-  // Actions to update variables
+
+  grid: Word[];
+
+  // Mostly used internally by the store
+  activeCellIndex: number;
+  allLettersEntered: boolean;
+    
+  // Actions to update state vars
   setLanguageCode: (_code: LanguageCode) => void;
-  setWordLength: (_len: number) => void;
   setColorSet: (_colorSet: GameColors) => void;
 
+  setWordLength: (_len: number) => void;
+  setGrid: (_word: Word) => void;
+  setWord: (_letters: Word) => void;
   setLetter: (_letter: string) => void;
-  setLetters: (_letters: GridCell[]) => void;
   setWordConfirmed: () => void;
   setStatusesConfirmed: (_confirmed: boolean) => void;
-  setSelectedKey: (_key: string) => void;
-  setActiveCellIndex: (_index: number) => void;
-
+  
   resetSolver: () => void;
 }
 
@@ -33,9 +40,9 @@ export const useSolverStore = create<SolverState>(set => ({
   // Initial values
   languageCode: null,
   wordLength: 0,
-  letters: [],
+  word: [],
+  grid: [],
   allLettersEntered: false,
-  selectedKey: null,
   activeCellIndex: 0,
   wordConfirmed: false,
   statusesConfirmed: false,
@@ -45,12 +52,16 @@ export const useSolverStore = create<SolverState>(set => ({
   setLanguageCode: code => set({ languageCode: code }),
   setColorSet: colorSet => set({ colorSet }),
   
-  setWordLength: len => {
-    set({ wordLength: len });
-    set({ letters: Array(len).fill({ symbol: '', status: undefined}) });
-    set({ activeCellIndex: 0 });
-  },
+  setWordLength: len => set({
+    wordLength: len,
+    word: getEmptyWord(len),
+    activeCellIndex: 0,
+  }),
   
+  // set({ wordLength: len });
+  // set({ word: getEmptyWord(len) });
+  // set({ activeCellIndex: 0 });
+
   setLetter: letter => {
     set(state => {
 
@@ -59,33 +70,41 @@ export const useSolverStore = create<SolverState>(set => ({
           return { wordConfirmed: true };
         }
       } else if (letter === BACKSPACE) {
-        const newLetters = [...state.letters];
-        newLetters[state.activeCellIndex].symbol = '';
+        const newWord = [...state.word];
+        newWord[state.activeCellIndex].symbol = '';
         const newActiveCellIndex = state.activeCellIndex > 0 ? state.activeCellIndex - 1 : 0;
 
-        return { letters: newLetters, activeCellIndex: newActiveCellIndex, allLettersEntered: false };
+        return { word: newWord, activeCellIndex: newActiveCellIndex, allLettersEntered: false };
       } else {
         // Normal letter input
-        const newLetters = [...state.letters];
-        newLetters[state.activeCellIndex] = { symbol: letter, status: undefined};
+        const newWord = [...state.word];
+        newWord[state.activeCellIndex] = { symbol: letter, status: undefined};
         const newActiveCellIndex = (state.activeCellIndex === state.wordLength - 1) ? state.activeCellIndex : state.activeCellIndex + 1;
-        const newAllLettersEntered = newLetters.every(letter => letter.symbol !== '');
-        return { letters: newLetters, activeCellIndex: newActiveCellIndex, allLettersEntered: newAllLettersEntered };
+        const newAllLettersEntered = newWord.every(letter => letter.symbol !== '');
+        return { word: newWord, activeCellIndex: newActiveCellIndex, allLettersEntered: newAllLettersEntered };
       }
     });
   },
-  setLetters: letters => set({ letters }),
+  setWord: word => set({ word }),
   setWordConfirmed: () => set({ wordConfirmed: true }),
   setStatusesConfirmed: confirmed => set({ statusesConfirmed: confirmed }),
 
-  setSelectedKey: key => set({ selectedKey: key }),
-  setActiveCellIndex: index => set({ activeCellIndex: index }),
+  setGrid: word => {
+    set(state => {
+      return {
+        grid: [...state.grid, word],
+        word: getEmptyWord(state.wordLength),
+        activeCellIndex: 0,
+        wordConfirmed: false,
+        statusesConfirmed: false,
+      }
+    });
+  },
 
   resetSolver: () => set({
     languageCode: 'en',
     wordLength: 0,
-    letters: [],
-    selectedKey: null,
+    word: [],
     activeCellIndex: 0,
     wordConfirmed: false,
     statusesConfirmed: false,

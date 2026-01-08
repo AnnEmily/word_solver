@@ -1,11 +1,11 @@
 import { MouseEvent, useMemo, useState, type FC } from "react";
 import { useShallow } from "zustand/shallow";
 import clsx from "clsx";
-import { Menu, MenuItem } from "@mui/material";
+import { Button, Menu, MenuItem } from "@mui/material";
 
 import { useTheme } from "../../shared/theme/useTheme";
 import { useSolverStore } from "../../shared/solverStore";
-import { LetterStatus, LETTER_STATUS, GameColors } from "../../shared/types";
+import { LetterStatus, LETTER_STATUS, GameColors, Word } from "../../shared/types";
 import { letterColors } from "../../shared/constants";
 import "../../Solver.css";
 
@@ -45,19 +45,21 @@ const STATUS_LABELS: Record<LetterStatus, string> = {
 
 interface GridRowProps {
   id: string;
+  word: Word;
+  isActiveWord?: boolean;
 }
 
-export const GridRow: FC<GridRowProps> = ({ id }) => {
+export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true }) => {
   const [menuState, setMenuState] = useState<MenuState>({ anchorEl: null, cellIndex: null });
 
-  const { activeCellIndex, wordConfirmed, colorSet, letters, setLetters, statusesConfirmed } =
+  const { activeCellIndex, wordConfirmed, colorSet, setGrid, setWord, statusesConfirmed } =
     useSolverStore(
       useShallow((state) => ({
         activeCellIndex: state.activeCellIndex,
         wordConfirmed: state.wordConfirmed,
         colorSet: state.colorSet,
-        letters: state.letters,
-        setLetters: state.setLetters,
+        setGrid: state.setGrid,
+        setWord: state.setWord,
         statusesConfirmed: state.statusesConfirmed,
       }))
     );
@@ -75,8 +77,8 @@ export const GridRow: FC<GridRowProps> = ({ id }) => {
       return
     };
 
-    const newLetters = letters.map((cell, index) => index === menuState.cellIndex ? { ...cell, status} : cell );
-    setLetters(newLetters);
+    const newWord = word.map((cell, index) => index === menuState.cellIndex ? { ...cell, status} : cell );
+    setWord(newWord);
     handleCloseMenu();
   };
 
@@ -101,17 +103,19 @@ export const GridRow: FC<GridRowProps> = ({ id }) => {
 
   return (
     <div id={id} className={className}>
-      {letters.map((cell, index) => {
-        const isActive = !wordConfirmed && index === activeCellIndex;
-        const cellClass = clsx("cell", isActive && "active");
-        const cellStyle = getBgColorStyle(cell.status);
+      <div className="row">
+        {word.map((cell, index) => {
+          const isActive = isActiveWord && !wordConfirmed && index === activeCellIndex;
+          const cellClass = clsx("cell", isActive && "active");
+          const cellStyle = getBgColorStyle(cell.status);
 
-        return (
-          <div key={index} className={cellClass} style={cellStyle} onClick={(e) => handleClickLetter(e, index)}>
-            {cell.symbol}
-          </div>
-        );
-      })}
+          return (
+            <div key={index} className={cellClass} style={cellStyle} onClick={(e) => handleClickLetter(e, index)}>
+              {cell.symbol}
+            </div>
+          );
+        })}
+      </div>
 
       <Menu
         open={open}
@@ -138,6 +142,23 @@ export const GridRow: FC<GridRowProps> = ({ id }) => {
           );
         })}
       </Menu>
+
+      {isActiveWord && wordConfirmed && colorSet && !statusesConfirmed && (            
+        <div className="msg">
+          <div className="warning">{"Click on each letter to set its status"}</div>
+          
+          {word.every(letter => letter.status) && (
+            <Button
+              variant="contained"
+              className="button"
+              sx={{ width: 'auto', marginTop: '10px' }}
+              onClick={() => setGrid(word)}
+            >
+              {"Done"}
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   );
 };

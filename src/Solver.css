@@ -114,10 +114,6 @@
   border: 0;
   transition: box-shadow .2s;
 }
-/* 
-.button:hover {
-  box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
-} */
 
 /* Messages */
 .msg {
@@ -227,8 +223,14 @@
 
 .gridrow {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  /* justify-content: center; */
   margin-bottom: 8px;
+
+  & .row {
+    display: flex;
+    justify-content: center;
+  }
 
   & .cell {
     border: 1px solid #888;
