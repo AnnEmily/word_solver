@@ -40,10 +40,20 @@ export const games: GameSet[] = [
 ];
 
 export const letterColors: LetterColors[] = [
-  { id: 1, colorSet: 'Wordle', colors: { includedRight: '#5ca755', includedWrong: '#ad9738', notIncluded: '#787c7e' } },
-  { id: 2, colorSet: 'Sutom', colors: { includedRight: '#e7002a', includedWrong: '#ffbd00', notIncluded: '#0077c7' } },
-  { id: 3, colorSet: 'default', colors: { includedRight: '#32c232', includedWrong: '#fbbd08', notIncluded: '#ff0000' } },
+  { id: 1, colorSet: 'Wordle', rightPlace: '#5ca755', wrongPlace: '#ad9738', notIncluded: '#787c7e' },
+  { id: 2, colorSet: 'Sutom', rightPlace: '#e7002a', wrongPlace: '#ffbd00', notIncluded: '#0077c7' },
+  { id: 3, colorSet: 'default', rightPlace: '#32c232', wrongPlace: '#fbbd08', notIncluded: '#ff0000' },
 ];
 
 // Must match dictionary .js files
 export const availableWordLengths = [4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+export const ENTER = '⏎';
+export const BACKSPACE = '⌫';
+
+export const qwertyKeyboard: string[][] = [
+  ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+  ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+  [ENTER, 'Z', 'X', 'C', 'V', 'B', 'N', 'M', BACKSPACE],
+];
+

@@ -41,9 +41,9 @@ export const getGameOptions = (field: keyof GameSet): JSX.Element[] => {
       element = (
         <>
           <div style={{ display: 'flex', gap: '5px', alignItems: 'center', paddingRight: '10px' }}>
-            <ColorBadge color={colorSet?.colors.includedRight} />
-            <ColorBadge color={colorSet?.colors.includedWrong} />
-            <ColorBadge color={colorSet?.colors.notIncluded} />
+            <ColorBadge color={colorSet?.rightPlace} />
+            <ColorBadge color={colorSet?.wrongPlace} />
+            <ColorBadge color={colorSet?.notIncluded} />
           </div>
           <div>{entry.field}</div>
         </>

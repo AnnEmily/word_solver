@@ -2,14 +2,14 @@ import { FC, useMemo, useState } from "react";
 import { useShallow } from 'zustand/shallow';
 import { Checkbox, FormControlLabel } from "@mui/material"
 
-import { SettingSelector } from "./SettingSelector";
-import { getArrayOptions, getGameOptions } from "./utils";
 import { Panel } from "../../shared/components";
 import { GameColors, LanguageName } from "../../shared/types";
 import { availableWordLengths, games } from "../../shared/constants";
-import { useSolverStore } from "../../shared/store";
+import { useSolverStore } from "../../shared/solverStore";
 import { languageCodeToName, languageNameToCode } from "../../shared/utilsString";
 
+import { SettingSelector } from "./SettingSelector";
+import { getArrayOptions, getGameOptions } from "./utils";
 
 export const SettingsPanel: FC = () => {
   // States for inner control
@@ -17,12 +17,12 @@ export const SettingsPanel: FC = () => {
 
   // States to/from children
   const [provider, setProvider] = useState<string>(null);
-  const [colorSet, setColorSet] = useState<GameColors>(null);
   const [openGameOnSelection, setOpenGameOnSelection] = useState<boolean>(false);
 
   // States to/from the store
   const [languageCode, setLanguageCode] = useSolverStore(useShallow(state => [state.languageCode, state.setLanguageCode]));
   const [wordLength, setWordLength] = useSolverStore(useShallow(state => [state.wordLength, state.setWordLength]));
+  const [colorSet, setColorSet] = useSolverStore(useShallow(state => [state.colorSet, state.setColorSet]));
 
   const options = useMemo(()=> {
     return ({

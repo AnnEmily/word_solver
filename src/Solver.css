@@ -1,6 +1,10 @@
-#solver {
-  height: -webkit-fill-available;
+.solver {
+  height: 100vh;
   padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 8px;
 
   &.dark {
     background-color: #1D2226;
@@ -82,8 +86,14 @@
   }
 }
 
+/* Keyboard styles */
 .keyboard {
   margin-top: 16px;
+
+  & .msg {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .keyrow {
@@ -123,6 +133,18 @@
     &:hover {
       background-color: #ffffff22;
     }
+
+    &.action-key {
+      background: #343434;
+      width: 3vh;
+
+      &.disabled {
+        color: #686868;
+        background-color: #2c2c2c;
+        border-color: #5c5c5c;
+        pointer-events: none;
+      }
+    }
   }
 
   & .action-key {
@@ -131,6 +153,7 @@
   }
 }
 
+/* Word list styles */
 #word-list-panel {
   & .controls {
     margin-top: 12px;
@@ -146,5 +169,54 @@
     color: black;
     padding: 6px 10px;
     border-radius: 4px;
+    overflow-y: scroll;
+    /* AEG review for a dynamic size*/
+    max-height: 200px;
   }
 }
+
+/* Grid styles */
+.grid {
+  margin-top: 16px;
+}
+
+.gridrow {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+
+  & .cell {
+    border: 1px solid #888;
+    border-radius: 4px;
+    margin: 0 4px;
+    background-color: #00000000;
+    user-select: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    text-align: center;
+    width: 2vh;
+    height: 16px;
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+
+    /* Default for mobile devices */
+    padding: 11px;
+
+    @media (min-width: 400px) {
+      padding: 14px;
+    }
+
+    &.active {
+      border: 2px solid green;
+    }
+
+    &:hover {
+      background-color: #ffffff22;
+    }
+  }
+}
+

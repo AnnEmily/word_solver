@@ -1,2 +1,2 @@
-export * from './Panel';
 export * from './CollapseButton';
+export * from './Panel';

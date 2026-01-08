@@ -1,18 +1,18 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, Fragment, useEffect, useMemo, useState } from "react";
 import { useShallow } from 'zustand/shallow';
-import { Checkbox, FormControlLabel } from "@mui/material";
 
 const dictionaries = import.meta.glob('../../dico/*/*.js');
 
+import { OptionCheckbox } from "./OptionCheckbox";
 import { dedupeIgnoringDiacriticsAndCase , filterDuplicatedLetters, removeWordsWithCapitals } from "./utils";
 import { Panel } from "../../shared/components";
-import { useSolverStore } from "../../shared/store";
+import { useSolverStore } from "../../shared/solverStore";
 import { LanguageCode } from "../../shared/types";
 
 export const WordListPanel: FC = () => {
   // States for inner control
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(true);
-  const [hideDuplicates, setHideDuplicates] = useState<boolean>(true);
+  const [hideDuplicates, setHideDuplicates] = useState<boolean>(false);
   const [dedupe, setDedupe] = useState<boolean>(true);
   const [noCapitals, setNoCapitals] = useState<boolean>(true);
 
@@ -43,11 +43,13 @@ export const WordListPanel: FC = () => {
   }
 
   useEffect(() => {
-    loadDictionary(languageCode, wordLength)
-      .then(({ dict, dictPath }) => {
-        console.log(`Loaded dictionary from ${dictPath} with ${dict.length} words.`);
-        setDictionary(dict);
+    if (languageCode && wordLength) {
+      loadDictionary(languageCode, wordLength)
+        .then(({ dict, dictPath }) => {
+          console.log(`Loaded dictionary from ${dictPath} with ${dict.length} words.`);
+          setDictionary(dict);
       });
+    }
   }, [languageCode, wordLength]);
 
   const sortedDict = useMemo(() => {
@@ -73,45 +75,40 @@ export const WordListPanel: FC = () => {
     return filteredDict.length;
   }, [filteredDict]);
 
+  const title = useMemo(() => {
+    return `${wordCount.toLocaleString()} words`;
+  }, [wordCount]);
+  
   return (
-    <Panel id="word-list-panel" title={'Word List'} isOpen={isPanelOpen} onToggle={() => setIsPanelOpen(!isPanelOpen)}>
-      <div className="controls">
-        <div>
-          <FormControlLabel 
-            label="No duplicated letters"
-            control={
-              <Checkbox
+    <Fragment>
+      {languageCode && wordLength !== 0 && (
+        <Panel id="word-list-panel" title={title} isOpen={isPanelOpen} onToggle={() => setIsPanelOpen(!isPanelOpen)}>
+          <div className="controls">
+            <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
+              <OptionCheckbox
+                label="No duplicated letters"
                 checked={hideDuplicates}
-                sx={{ color: '#7e7e7e' }}
-                onChange={() => setHideDuplicates(!hideDuplicates)}
+                onToggle={() => setHideDuplicates(!hideDuplicates)}
               />
-          } />
-          <FormControlLabel 
-            label="No capital letters"
-            control={
-              <Checkbox
+              <OptionCheckbox
+                label="No capital letters"
                 checked={noCapitals}
-                sx={{ color: '#7e7e7e' }}
-                onChange={() => setNoCapitals(!noCapitals)}
+                onToggle={() => setNoCapitals(!noCapitals)}
               />
-          } />
-          <FormControlLabel 
-            label="Dedupe similar words"
-            control={
-              <Checkbox
+              <OptionCheckbox
+                label="Dedupe similar words"
                 checked={dedupe}
-                sx={{ color: '#7e7e7e' }}
-                onChange={() => setDedupe(!dedupe)}
+                onToggle={() => setDedupe(!dedupe)}
               />
-          } />
-        </div>
+            </div>
+          </div>
 
-        <div>{`Word Count: ${wordCount.toLocaleString()}`}</div>
-      </div>
-      <div className="word-list">
-        {filteredDict.join(' - ')}
-      </div>
-    </Panel>
+          <div className="word-list">
+            {filteredDict.join(' - ')}
+          </div>
+        </Panel>
+      )}
+    </Fragment>
   );
 };
 

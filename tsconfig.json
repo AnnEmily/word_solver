@@ -15,7 +15,7 @@
     
     "types": ["vite/client"],
     // For nodejs:
-    // "lib": ["esnext"],
+    "lib": ["esnext"],
     // "lib": ["es2018", "dom"],
     // "types": ["node"],
     // and npm install -D @types/node
