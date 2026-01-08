@@ -8,18 +8,22 @@ import { qwertyKeyboard } from "../../shared/constants";
 import '../../Solver.css';
 
 import KeyRow from "./KeyRow";
+import { Button } from "@mui/material";
 
 export const Keyboard: FC = () => {
-  const { colorSet, wordConfirmed } = useSolverStore(useShallow(state => ({
+  const { colorSet, statusesConfirmed, setStatusesConfirmed, wordConfirmed, wordLength } = useSolverStore(useShallow(state => ({
     colorSet: state.colorSet,
-    wordConfirmed: state.wordConfirmed
+    statusesConfirmed: state.statusesConfirmed,
+    setStatusesConfirmed: state.setStatusesConfirmed,
+    wordConfirmed: state.wordConfirmed,
+    wordLength: state.wordLength,
   })));
 
   const className = clsx('keyboard', useTheme().theme)
-
+  
   return (
     <div id="keyboard" className={className}>
-      {!wordConfirmed && (
+      {!wordConfirmed && wordLength !== 0 && (
         <div className="panel">
           {qwertyKeyboard.map((row, index) => (
           <KeyRow key={index} id={`row${index + 1}`} keys={row} />
@@ -28,11 +32,21 @@ export const Keyboard: FC = () => {
       )}
 
       {wordConfirmed && !colorSet && (
-        <div className="msg">{"You need to select a Color Set"}</div>
+        <div className="msg warning">{"You need to select a Color Set"}</div>
       )}
 
-      {wordConfirmed && colorSet && (
-        <div className="msg">{"Click on each letter found in the word"}</div>
+      {wordConfirmed && colorSet && !statusesConfirmed && (
+          <div className="msg">
+            <div className="warning">{"Click on each letter to set its status"}</div>
+            <Button
+              variant="contained"
+              className="button"
+              sx={{ width: 'auto', marginTop: '10px' }}
+              onClick={() => setStatusesConfirmed(true)}
+            >
+              {"Done"}
+            </Button>
+          </div>
       )}
     </div>
   );

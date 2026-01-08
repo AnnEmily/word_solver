@@ -11,7 +11,7 @@ import "../../Solver.css";
 
 const menuStyle = {
   '& .MuiMenu-list': { padding: '0px !important'},
-  '& .MuiMenuItem-root': { padding: '0px !important'},
+  '& .MuiMenuItem-root': { padding: '0px !important', minHeight: '0px' },
 };
 
 const arrowStyle = {
@@ -50,7 +50,7 @@ interface GridRowProps {
 export const GridRow: FC<GridRowProps> = ({ id }) => {
   const [menuState, setMenuState] = useState<MenuState>({ anchorEl: null, cellIndex: null });
 
-  const { activeCellIndex, wordConfirmed, colorSet, letters, setLetters } =
+  const { activeCellIndex, wordConfirmed, colorSet, letters, setLetters, statusesConfirmed } =
     useSolverStore(
       useShallow((state) => ({
         activeCellIndex: state.activeCellIndex,
@@ -58,6 +58,7 @@ export const GridRow: FC<GridRowProps> = ({ id }) => {
         colorSet: state.colorSet,
         letters: state.letters,
         setLetters: state.setLetters,
+        statusesConfirmed: state.statusesConfirmed,
       }))
     );
 
@@ -92,17 +93,21 @@ export const GridRow: FC<GridRowProps> = ({ id }) => {
   }, [colorSet, letterColorsBySet]);
 
   const open = Boolean(menuState.anchorEl);
-  const activeCell = menuState.cellIndex !== null ? letters[menuState.cellIndex] : null;
   const className = clsx("gridrow", useTheme().theme);
+  
+  const getBgColorStyle = (status: LetterStatus) => {
+    return { backgroundColor: statusColors[status] };
+  };
 
   return (
     <div id={id} className={className}>
       {letters.map((cell, index) => {
         const isActive = !wordConfirmed && index === activeCellIndex;
         const cellClass = clsx("cell", isActive && "active");
+        const cellStyle = getBgColorStyle(cell.status);
 
         return (
-          <div key={index} className={cellClass} onClick={(e) => handleClickLetter(e, index)}>
+          <div key={index} className={cellClass} style={cellStyle} onClick={(e) => handleClickLetter(e, index)}>
             {cell.symbol}
           </div>
         );
@@ -118,14 +123,15 @@ export const GridRow: FC<GridRowProps> = ({ id }) => {
         slotProps={{ paper: { sx: arrowStyle } }}
       >
         {LETTER_STATUS.map((status) => {
-          const bgColor = statusColors[status];
+          const cellStyle = getBgColorStyle(status);
           return (
             <MenuItem
               key={status}
-              selected={activeCell?.status === status}
+              disabled={statusesConfirmed}
               onClick={() => handleSelectStatus(status)}
+              sx={{ opacity: '1 !important' }}
             >
-              <div style={{ backgroundColor: bgColor, width: '100%', padding: '4px 8px', margin: '2px', borderRadius: '4px' }}>
+              <div className="status-entry" style={cellStyle}>
                 {STATUS_LABELS[status]}
               </div>
             </MenuItem>

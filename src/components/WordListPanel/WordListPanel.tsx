@@ -79,9 +79,11 @@ export const WordListPanel: FC = () => {
     return `${wordCount.toLocaleString()} words`;
   }, [wordCount]);
   
+  const canDisplayWordList = languageCode && wordLength !== 0;
+
   return (
     <Fragment>
-      {languageCode && wordLength !== 0 && (
+      {canDisplayWordList && (
         <Panel id="word-list-panel" title={title} isOpen={isPanelOpen} onToggle={() => setIsPanelOpen(!isPanelOpen)}>
           <div className="controls">
             <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
@@ -107,6 +109,10 @@ export const WordListPanel: FC = () => {
             {filteredDict.join(' - ')}
           </div>
         </Panel>
+      )}
+
+      {!canDisplayWordList && (
+        <div className="msg warning">{"You need to select both a language and a word length to view the word list"}</div>
       )}
     </Fragment>
   );

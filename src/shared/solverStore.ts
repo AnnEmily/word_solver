@@ -11,6 +11,7 @@ interface SolverState {
   activeCellIndex: number;
   allLettersEntered: boolean;
   wordConfirmed: boolean;
+  statusesConfirmed: boolean;
   colorSet: GameColors;
   
   // Actions to update variables
@@ -21,6 +22,7 @@ interface SolverState {
   setLetter: (_letter: string) => void;
   setLetters: (_letters: GridCell[]) => void;
   setWordConfirmed: () => void;
+  setStatusesConfirmed: (_confirmed: boolean) => void;
   setSelectedKey: (_key: string) => void;
   setActiveCellIndex: (_index: number) => void;
 
@@ -36,6 +38,7 @@ export const useSolverStore = create<SolverState>(set => ({
   selectedKey: null,
   activeCellIndex: 0,
   wordConfirmed: false,
+  statusesConfirmed: false,
   colorSet: null,
 
   // Actions
@@ -73,9 +76,18 @@ export const useSolverStore = create<SolverState>(set => ({
   },
   setLetters: letters => set({ letters }),
   setWordConfirmed: () => set({ wordConfirmed: true }),
+  setStatusesConfirmed: confirmed => set({ statusesConfirmed: confirmed }),
 
   setSelectedKey: key => set({ selectedKey: key }),
   setActiveCellIndex: index => set({ activeCellIndex: index }),
 
-  resetSolver: () => set({ languageCode: 'en', wordLength: 0, letters: [], selectedKey: null, activeCellIndex: 0, wordConfirmed: false }),
+  resetSolver: () => set({
+    languageCode: 'en',
+    wordLength: 0,
+    letters: [],
+    selectedKey: null,
+    activeCellIndex: 0,
+    wordConfirmed: false,
+    statusesConfirmed: false,
+  }),
 }));
