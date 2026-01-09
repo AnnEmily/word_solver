@@ -23,7 +23,7 @@ export const Grid: FC = () => {
       {wordLength !== 0 && (
         <div id="grid" className={className}>
           {grid.map((row, index) => {
-            return <GridRow id={`row-${index}`} key={index} isActiveWord={false} word={row} />;
+            return <GridRow id={`row-${index}`} key={index} isActiveWord={false} word={row} rowIndex={index} />;
           })}
           <GridRow id="activeRow" word={word} />
         </div>

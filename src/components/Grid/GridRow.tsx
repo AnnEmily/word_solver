@@ -17,7 +17,7 @@ const menuStyle = {
 const arrowStyle = {
   overflow: 'visible', // Essential so the arrow is not cut off
   filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-  mt: 1.5, // Space for the arrow
+  mt: 1, // Space for the arrow
   '&::before': {
     content: '""',
     display: 'block',
@@ -47,17 +47,19 @@ interface GridRowProps {
   id: string;
   word: Word;
   isActiveWord?: boolean;
+  rowIndex?: number;
 }
 
-export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true }) => {
+export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true, rowIndex = null }) => {
   const [menuState, setMenuState] = useState<MenuState>({ anchorEl: null, cellIndex: null });
 
-  const { activeCellIndex, wordConfirmed, colorSet, setGrid, setWord, statusesConfirmed } =
+  const { activeCellIndex, wordConfirmed, colorSet, grid, setGrid, setWord, statusesConfirmed } =
     useSolverStore(
       useShallow((state) => ({
         activeCellIndex: state.activeCellIndex,
         wordConfirmed: state.wordConfirmed,
         colorSet: state.colorSet,
+        grid: state.grid,
         setGrid: state.setGrid,
         setWord: state.setWord,
         statusesConfirmed: state.statusesConfirmed,
@@ -74,7 +76,7 @@ export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true }) => 
 
   const handleSelectStatus = (status: LetterStatus) => {
     if (menuState.cellIndex === null) {
-      return
+      return;
     };
 
     const newWord = word.map((cell, index) => index === menuState.cellIndex ? { ...cell, status} : cell );
@@ -106,42 +108,64 @@ export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true }) => 
       <div className="row">
         {word.map((cell, index) => {
           const isActive = isActiveWord && !wordConfirmed && index === activeCellIndex;
-          const cellClass = clsx("cell", isActive && "active");
+          const enableMenu = wordConfirmed || rowIndex !== null;
+          const cellClass = clsx("cell", isActive && "active", enableMenu && "clickable");
           const cellStyle = getBgColorStyle(cell.status);
 
           return (
-            <div key={index} className={cellClass} style={cellStyle} onClick={(e) => handleClickLetter(e, index)}>
+            <div
+              key={index}
+              className={cellClass}
+              style={cellStyle}
+              onClick={e => enableMenu ? handleClickLetter(e, index) : null}
+            >
               {cell.symbol}
             </div>
           );
         })}
       </div>
 
-      <Menu
-        open={open}
-        anchorEl={menuState.anchorEl}
-        onClose={handleCloseMenu}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        transformOrigin={{ vertical: "top", horizontal: "center" }}
-        sx={menuStyle}
-        slotProps={{ paper: { sx: arrowStyle } }}
-      >
-        {LETTER_STATUS.map((status) => {
-          const cellStyle = getBgColorStyle(status);
-          return (
-            <MenuItem
-              key={status}
-              disabled={statusesConfirmed}
-              onClick={() => handleSelectStatus(status)}
-              sx={{ opacity: '1 !important' }}
-            >
-              <div className="status-entry" style={cellStyle}>
-                {STATUS_LABELS[status]}
-              </div>
-            </MenuItem>
-          );
-        })}
-      </Menu>
+      {menuState.cellIndex !== null && (
+        <Menu
+          open={open}
+          anchorEl={menuState.anchorEl}
+          onClose={handleCloseMenu}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          transformOrigin={{ vertical: "top", horizontal: "center" }}
+          sx={menuStyle}
+          slotProps={{ paper: { sx: arrowStyle } }}
+        >
+          {LETTER_STATUS.map((status) => {
+            // console.log('not isActiveWord', !isActiveWord);
+            // console.log('menuState.cellIndex', menuState.cellIndex);
+            // console.log('rowIndex', rowIndex);
+            // if (menuState.cellIndex !== undefined && rowIndex !== null ) {
+            //   console.log('grid[rowIndex][menuState.cellIndex]', grid[rowIndex][menuState.cellIndex]);
+            // }
+            // console.log('status', status);
+
+            if (!isActiveWord && grid[rowIndex][menuState.cellIndex].status !== status) {
+              // For an inactive word, skip status if it is not the current status of the letter
+              return null;
+            }
+
+            // For an active word, display all options
+            const menuItemStyle = getBgColorStyle(status);
+            return (
+              <MenuItem
+                key={status}
+                disabled={statusesConfirmed}
+                onClick={() => isActiveWord ? handleSelectStatus(status) : handleCloseMenu()}
+                sx={{ opacity: '1 !important', cursor: isActiveWord ? 'pointer' : 'default' }}
+              >
+                <div className="status-entry" style={menuItemStyle}>
+                  {STATUS_LABELS[status]}
+                </div>
+              </MenuItem>
+            );
+          })}
+        </Menu>
+      )}
 
       {isActiveWord && wordConfirmed && colorSet && !statusesConfirmed && (            
         <div className="msg">

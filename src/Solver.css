@@ -130,11 +130,6 @@
 /* Keyboard styles */
 .keyboard {
   margin-top: 16px;
-
-  /* & .msg {
-    display: flex;
-    justify-content: center;
-  } */
 }
 
 .keyrow {
@@ -238,7 +233,6 @@
     margin: 0 4px;
     background-color: #00000000;
     user-select: none;
-    cursor: pointer;
     font-weight: bold;
     font-size: 1rem;
     text-align: center;
@@ -261,8 +255,8 @@
       border: 2px solid #90CAF9;
     }
 
-    &:hover {
-      background-color: #ffffff22;
+    &.clickable {
+      cursor: pointer;
     }
   }
 }

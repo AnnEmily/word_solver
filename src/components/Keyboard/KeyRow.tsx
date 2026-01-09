@@ -14,7 +14,10 @@ interface KeyRowProps {
 
 export const KeyRow: FC<KeyRowProps> = ({ id, keys }) => {
   const setLetter = useSolverStore(state => state.setLetter);
-  const allLettersEntered = useSolverStore(useShallow(state => state.allLettersEntered));
+  const { activeCellIndex, allLettersEntered } = useSolverStore(useShallow(state => ({
+    activeCellIndex: state.activeCellIndex,
+    allLettersEntered: state.allLettersEntered,
+  })));
 
   const { theme } = useTheme();
   const className = clsx('keyrow', theme)
@@ -23,15 +26,15 @@ export const KeyRow: FC<KeyRowProps> = ({ id, keys }) => {
     <div id={id} className={className}>
       {keys.map((key) => {
         const isActionKey = key === ENTER || key === BACKSPACE;
-        const isDisabled = !allLettersEntered && key === ENTER;
-        const keyClass = clsx('key', isActionKey && 'action-key', isDisabled && 'disabled');
+        const isDisabledKey = (key === ENTER && !allLettersEntered) || (key === BACKSPACE && activeCellIndex === 0);
+        const keyClass = clsx('key', isActionKey && 'action-key', isDisabledKey && 'disabled');
 
         return (
           <div
             key={key}
             className={keyClass}
-            onClick={() => isDisabled ? null : setLetter(key)}
-            aria-disabled={isDisabled}
+            onClick={() => isDisabledKey ? null : setLetter(key)}
+            aria-disabled={isDisabledKey}
           >
             {key}
           </div>

@@ -12,14 +12,14 @@ interface SolverState {
   colorSet: GameColors;
 
   wordLength: number;
-  word: Word;
-  wordConfirmed: boolean;
-  statusesConfirmed: boolean;
+  word: Word;                   // the active word, whose letters are being entered
+  activeCellIndex: number;      // the active letter position of 'word'. A letter typed will populate that cell
+  wordConfirmed: boolean;       // set to true after user entered all letters and hit ENTER
+  statusesConfirmed: boolean;   // set to true when user set the status of each letter in 'word' and clicked DONE
 
-  grid: Word[];
+  grid: Word[];                 // the words entered previously. Var 'word' is excluded from 'grid'
 
-  // Mostly used internally by the store
-  activeCellIndex: number;
+  // Used internally by the store
   allLettersEntered: boolean;
     
   // Actions to update state vars
@@ -57,17 +57,13 @@ export const useSolverStore = create<SolverState>(set => ({
     word: getEmptyWord(len),
     activeCellIndex: 0,
   }),
-  
-  // set({ wordLength: len });
-  // set({ word: getEmptyWord(len) });
-  // set({ activeCellIndex: 0 });
 
   setLetter: letter => {
     set(state => {
 
       if (letter === ENTER) {
         if (state.allLettersEntered) {
-          return { wordConfirmed: true };
+          return { wordConfirmed: true, allLettersEntered: false };
         }
       } else if (letter === BACKSPACE) {
         const newWord = [...state.word];
@@ -96,6 +92,7 @@ export const useSolverStore = create<SolverState>(set => ({
         word: getEmptyWord(state.wordLength),
         activeCellIndex: 0,
         wordConfirmed: false,
+        allLettersEnterd: false,
         statusesConfirmed: false,
       }
     });
