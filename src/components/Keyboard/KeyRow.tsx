@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 import { useTheme } from "../../shared/theme/useTheme";
 import { BACKSPACE, ENTER } from "../../shared/constants";
-import { useSolverStore } from "../../shared/solverStore";
+import { useSolverStore } from "../../shared/store";
 import '../../Solver.css';
 
 interface KeyRowProps {
@@ -25,9 +25,11 @@ export const KeyRow: FC<KeyRowProps> = ({ id, keys }) => {
   return (
     <div id={id} className={className}>
       {keys.map((key) => {
-        const isActionKey = key === ENTER || key === BACKSPACE;
-        const isDisabledKey = (key === ENTER && !allLettersEntered) || (key === BACKSPACE && activeCellIndex === 0);
-        const keyClass = clsx('key', isActionKey && 'action-key', isDisabledKey && 'disabled');
+        const isKeyEnter = key === ENTER;
+        const isKeyBackSpace = key === BACKSPACE;
+        const isActionKey = isKeyEnter || isKeyBackSpace ;
+        const isDisabledKey = (isKeyEnter && !allLettersEntered) || (isKeyBackSpace && activeCellIndex === 0);
+        const keyClass = clsx('key', isActionKey && 'action-key', isKeyEnter && !isDisabledKey && 'button', isDisabledKey && 'disabled');
 
         return (
           <div

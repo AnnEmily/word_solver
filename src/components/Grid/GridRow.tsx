@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { Button, Menu, MenuItem } from "@mui/material";
 
 import { useTheme } from "../../shared/theme/useTheme";
-import { useSolverStore } from "../../shared/solverStore";
+import { useSolverStore } from "../../shared/store";
 import { LetterStatus, LETTER_STATUS, GameColors, Word } from "../../shared/types";
 import { letterColors } from "../../shared/constants";
 import "../../Solver.css";
@@ -53,10 +53,11 @@ interface GridRowProps {
 export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true, rowIndex = null }) => {
   const [menuState, setMenuState] = useState<MenuState>({ anchorEl: null, cellIndex: null });
 
-  const { activeCellIndex, wordConfirmed, colorSet, grid, setGrid, setWord, statusesConfirmed } =
+  const { activeCellIndex, candidateLetters, grid, wordConfirmed, colorSet, setGrid, setWord, statusesConfirmed } =
     useSolverStore(
       useShallow((state) => ({
         activeCellIndex: state.activeCellIndex,
+        candidateLetters: state.candidateLetters,
         wordConfirmed: state.wordConfirmed,
         colorSet: state.colorSet,
         grid: state.grid,
@@ -75,15 +76,23 @@ export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true, rowIn
   };
 
   const handleSelectStatus = (status: LetterStatus) => {
-    if (menuState.cellIndex === null) {
-      return;
-    };
-
     const newWord = word.map((cell, index) => index === menuState.cellIndex ? { ...cell, status} : cell );
     setWord(newWord);
     handleCloseMenu();
   };
 
+  const contradictoryletter = useMemo((): string => {
+    // Make sure no letter is declared both included and excluded
+    const includedLetters = word
+      .filter(letter => ['rightPlace', 'wrongPlace'].includes(letter.status))
+      .map(letter => letter.symbol);
+    const excludedLetters = word
+      .filter(letter => letter.status === 'notIncluded')
+      .map(letter => letter.symbol);
+    return includedLetters.filter(value => excludedLetters.includes(value)).pop();
+  }, [word]);
+
+  // AEG move outside ?
   const letterColorsBySet: Record<GameColors, Record<LetterStatus, string>> =
     Object.fromEntries(
       letterColors.map(({ colorSet, rightPlace, wrongPlace, notIncluded }) => [
@@ -96,12 +105,100 @@ export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true, rowIn
     return letterColorsBySet[set];
   }, [colorSet, letterColorsBySet]);
 
-  const open = Boolean(menuState.anchorEl);
-  const className = clsx("gridrow", useTheme().theme);
-  
   const getBgColorStyle = (status: LetterStatus) => {
     return { backgroundColor: statusColors[status] };
   };
+
+  const allowedStatuses = useMemo((): LetterStatus[] => {
+    if (menuState.cellIndex !== null) {
+      const cellIndex = menuState.cellIndex;
+
+      if (!isActiveWord) {
+        // User clicked in a grid cell
+        return [grid[rowIndex][cellIndex].status];
+      }
+
+      // User clicked in a word cell
+      const letter = word[cellIndex];
+
+      // If symbol is not found in any candidates, it was rejected before
+      const allSymbols = candidateLetters.flatMap(cl => cl.symbols);
+      const symbolNotFound = allSymbols.find(s => s === letter.symbol) === undefined;
+      if (symbolNotFound) {
+        console.log('path A');
+        return ['notIncluded'];
+      }
+
+      const unsureEntries = candidateLetters.filter(cl => cl.symbols.length > 1);
+
+      // Case of a cell whose symbol is in rightPLace
+      if (candidateLetters[cellIndex].symbols.length === 1) {
+        if (candidateLetters[cellIndex].symbols.includes(letter.symbol)) {
+          console.log('path F1');
+          return ['rightPlace'];
+        }
+
+        if (!unsureEntries.every(entry => entry.symbols.includes(letter.symbol))) {
+          // That symbol was declared wrong place befoe, then it still is
+          console.log('path F2');
+          return ['wrongPlace'];
+        }
+
+        // That symbol was never teste before
+        console.log('path F3');
+        return ['wrongPlace', 'notIncluded'];
+      }
+
+      
+      const sureEntries = candidateLetters.filter(cl => cl.symbols.length === 1);
+
+      // Considering letters that were declared in the right place before
+      if (sureEntries.some(entry => entry.symbols.includes(letter.symbol))) {
+        if (candidateLetters[cellIndex].symbols[0] === letter.symbol) {
+          console.log('path B1');
+          return ['rightPlace'];
+        } else {
+          console.log('path B2');
+          return ['rightPlace', 'wrongPlace'];
+        }
+      }
+
+      // Case of a symbol that was never submitted
+      if (unsureEntries.every(entry => entry.symbols.includes(letter.symbol))) {
+        console.log('path C');
+        return ['rightPlace', 'wrongPlace', 'notIncluded'];
+      }
+
+      const unsureContainingSymbol = unsureEntries.filter(entry => entry.symbols.includes(letter.symbol));
+
+      // Case of a symbol that was declared wrong, but is in fact left in only one candidate
+      if (unsureContainingSymbol.length === 1) {
+        if (unsureContainingSymbol[0].cellIndex === cellIndex) {
+          console.log('path D1');
+          return ['rightPlace'];
+        } else {
+          console.log('path D2');
+          return ['wrongPlace'];
+        }
+      }
+
+      // Case of a symbol that was declared wrong, but that is left in many candidate
+
+      if (unsureContainingSymbol.length > 1) {
+          console.log('path E');
+          return ['rightPlace', 'wrongPlace'];
+      }
+    }
+
+
+    console.log('path default');
+    return [...LETTER_STATUS];
+  }, [menuState.cellIndex, word, isActiveWord, candidateLetters, grid, rowIndex]);
+
+  const open = Boolean(menuState.anchorEl);
+  const className = clsx("gridrow", useTheme().theme);
+
+  console.log('candidateLetters', candidateLetters);
 
   return (
     <div id={id} className={className}>
@@ -135,21 +232,7 @@ export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true, rowIn
           sx={menuStyle}
           slotProps={{ paper: { sx: arrowStyle } }}
         >
-          {LETTER_STATUS.map((status) => {
-            // console.log('not isActiveWord', !isActiveWord);
-            // console.log('menuState.cellIndex', menuState.cellIndex);
-            // console.log('rowIndex', rowIndex);
-            // if (menuState.cellIndex !== undefined && rowIndex !== null ) {
-            //   console.log('grid[rowIndex][menuState.cellIndex]', grid[rowIndex][menuState.cellIndex]);
-            // }
-            // console.log('status', status);
-
-            if (!isActiveWord && grid[rowIndex][menuState.cellIndex].status !== status) {
-              // For an inactive word, skip status if it is not the current status of the letter
-              return null;
-            }
-
-            // For an active word, display all options
+          {allowedStatuses.map((status) => {
             const menuItemStyle = getBgColorStyle(status);
             return (
               <MenuItem
@@ -167,9 +250,9 @@ export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true, rowIn
         </Menu>
       )}
 
-      {isActiveWord && wordConfirmed && colorSet && !statusesConfirmed && (            
+      {isActiveWord && wordConfirmed && colorSet && !statusesConfirmed && !contradictoryletter && (            
         <div className="msg">
-          <div className="warning">{"Click on each letter to set its status"}</div>
+          <div className="info">{"Click on each letter to set its status"}</div>
           
           {word.every(letter => letter.status) && (
             <Button
@@ -182,6 +265,12 @@ export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true, rowIn
             </Button>
           )}
         </div>
+      )}
+
+      {contradictoryletter && (
+        <div className="msg">
+          <div className="error">{`Letter ${contradictoryletter} cannot be both included and excluded from the word`}</div>
+        </div>        
       )}
     </div>
   );

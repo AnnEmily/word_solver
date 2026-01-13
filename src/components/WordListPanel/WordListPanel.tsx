@@ -6,7 +6,7 @@ const dictionaries = import.meta.glob('../../dico/*/*.js');
 import { OptionCheckbox } from "./OptionCheckbox";
 import { dedupeIgnoringDiacriticsAndCase , filterDuplicatedLetters, removeWordsWithCapitals } from "./utils";
 import { Panel } from "../../shared/components";
-import { useSolverStore } from "../../shared/solverStore";
+import { useSolverStore } from "../../shared/store";
 import { LanguageCode } from "../../shared/types";
 
 export const WordListPanel: FC = () => {
@@ -112,7 +112,9 @@ export const WordListPanel: FC = () => {
       )}
 
       {!canDisplayWordList && (
-        <div className="msg warning">{"You need to select both a language and a word length to view the word list"}</div>
+        <div className="msg">
+          <div className="warning">{"You need to select both a language and a word length to view the word list"}</div>
+        </div>
       )}
     </Fragment>
   );

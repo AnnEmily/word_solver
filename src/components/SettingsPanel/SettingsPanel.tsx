@@ -5,7 +5,7 @@ import { Checkbox, FormControlLabel } from "@mui/material"
 import { Panel } from "../../shared/components";
 import { GameColors, LanguageName } from "../../shared/types";
 import { availableWordLengths, games } from "../../shared/constants";
-import { useSolverStore } from "../../shared/solverStore";
+import { useSolverStore } from "../../shared/store";
 import { languageCodeToName, languageNameToCode } from "../../shared/utilsString";
 
 import { SettingSelector } from "./SettingSelector";
@@ -23,6 +23,7 @@ export const SettingsPanel: FC = () => {
   const [languageCode, setLanguageCode] = useSolverStore(useShallow(state => [state.languageCode, state.setLanguageCode]));
   const [wordLength, setWordLength] = useSolverStore(useShallow(state => [state.wordLength, state.setWordLength]));
   const [colorSet, setColorSet] = useSolverStore(useShallow(state => [state.colorSet, state.setColorSet]));
+  const resetSolver = useSolverStore(state => state.resetSolver);
 
   const options = useMemo(()=> {
     return ({
@@ -48,6 +49,14 @@ export const SettingsPanel: FC = () => {
     }
   };
 
+  const handleChangeWordLength = (len: number) => {
+    // if (!colorSet) {
+    //   setColorSet('default');
+    // }
+    resetSolver();
+    setWordLength(len);
+  };
+  
   return (
     <Panel id="settings-panel" title={"Settings"} isOpen={isPanelOpen} onToggle={() => setIsPanelOpen(!isPanelOpen)}>
       <div className="controls">
@@ -76,7 +85,7 @@ export const SettingsPanel: FC = () => {
           label="Word Length"
           value={wordLength?.toString() ?? ''}
           options={options.wordLength}
-          onSelect={val => setWordLength(Number(val))}
+          onSelect={val => handleChangeWordLength(Number(val))}
         />
         <SettingSelector
           id="colors"

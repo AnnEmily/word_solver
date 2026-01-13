@@ -51,6 +51,10 @@ export const availableWordLengths = [4, 5, 6, 7, 8, 9, 10, 11, 12];
 export const ENTER = '⏎';
 export const BACKSPACE = '⌫';
 
+export const alphabet = Array.from({ length: 26 }, (_, i) =>
+  String.fromCharCode(65 + i) // uppercase letters
+);
+
 export const qwertyKeyboard: string[][] = [
   ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
   ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],

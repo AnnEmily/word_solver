@@ -25,10 +25,11 @@ export type LetterColors = {
 
 export type GridCell = {
   symbol: string;
-  status: LetterStatus;
+  status: LetterStatus | null;
 };
 
 export type Word = GridCell[];
+export type Grid = Word[];
 
 export type GameSet = {
   id: number;
@@ -38,4 +39,9 @@ export type GameSet = {
   colorSet: GameColors;
   wordLength: number;
   link: string;
+};
+
+export type CandidateLetter = {
+  cellIndex: number;
+  symbols: string[];
 };

@@ -4,14 +4,15 @@ import clsx from "clsx";
 
 import GridRow from "./GridRow";
 import { useTheme } from "../../shared/theme/useTheme";
-import { useSolverStore } from "../../shared/solverStore";
+import { useSolverStore } from "../../shared/store";
 import '../../Solver.css';
 
 
 export const Grid: FC = () => {
-  const { grid, word, wordLength } = useSolverStore(useShallow(state => ({
+  const { grid, word, wordFound, wordLength } = useSolverStore(useShallow(state => ({
     grid: state.grid,
     word: state.word,
+    wordFound: state.wordFound,
     wordLength: state.wordLength,
   })));
   
@@ -25,7 +26,10 @@ export const Grid: FC = () => {
           {grid.map((row, index) => {
             return <GridRow id={`row-${index}`} key={index} isActiveWord={false} word={row} rowIndex={index} />;
           })}
-          <GridRow id="activeRow" word={word} />
+
+          {!wordFound && (
+            <GridRow id="activeRow" word={word} />
+          )}
         </div>
       )}
     </Fragment>
