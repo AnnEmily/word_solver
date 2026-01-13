@@ -21,7 +21,7 @@ export const Keyboard: FC = () => {
   
   return (
     <div id="keyboard" className={className}>
-      {!wordFound && !wordConfirmed && wordLength !== 0 && (
+      {!wordFound && wordLength !== 0 && (
         <div className="panel">
           {qwertyKeyboard.map((row, index) => (
             <KeyRow key={index} id={`kb-row${index + 1}`} keys={row} />

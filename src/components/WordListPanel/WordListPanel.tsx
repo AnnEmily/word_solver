@@ -4,7 +4,7 @@ import { useShallow } from 'zustand/shallow';
 const dictionaries = import.meta.glob('../../dico/*/*.js');
 
 import { OptionCheckbox } from "./OptionCheckbox";
-import { dedupeIgnoringDiacriticsAndCase , filterDuplicatedLetters, removeWordsWithCapitals } from "./utils";
+import { buildRegexFromCandidates, dedupeIgnoringDiacriticsAndCase, filterDuplicatedLetters, removeWordsWithCapitals } from "./utils";
 import { Panel } from "../../shared/components";
 import { useSolverStore } from "../../shared/store";
 import { LanguageCode } from "../../shared/types";
@@ -12,7 +12,7 @@ import { LanguageCode } from "../../shared/types";
 export const WordListPanel: FC = () => {
   // States for inner control
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(true);
-  const [hideDuplicates, setHideDuplicates] = useState<boolean>(false);
+  const [hideDuplicates, setHideDuplicates] = useState<boolean>(true);
   const [dedupe, setDedupe] = useState<boolean>(true);
   const [noCapitals, setNoCapitals] = useState<boolean>(true);
 
@@ -20,8 +20,14 @@ export const WordListPanel: FC = () => {
   const [dictionary, setDictionary] = useState<string[]>([]);
 
   // States to/from the store
-  const languageCode = useSolverStore(useShallow(state => state.languageCode));
-  const wordLength = useSolverStore(useShallow(state => state.wordLength));
+  const { candidateLetters, languageCode, mustInclude, setWord, wordConfirmed, wordLength } = useSolverStore(useShallow(state => ({
+    candidateLetters: state.candidateLetters,
+    languageCode: state.languageCode,
+    mustInclude: state.mustInclude,
+    setWord: state.setWord,
+    wordConfirmed: state.wordConfirmed,
+    wordLength: state.wordLength,
+  })))
 
   const loadDictionary = async (language: LanguageCode, wordLength: number): Promise<any> => {
       // Load words from file. Assuming files are named as XX/YY.js where XX is the language 
@@ -52,11 +58,17 @@ export const WordListPanel: FC = () => {
     }
   }, [languageCode, wordLength]);
 
-  const sortedDict = useMemo(() => {
+  const handleWordDoubleClick = (word: string) => {
+    if (!wordConfirmed) {
+      setWord(word.split('').map(letter => ({ symbol: letter.toUpperCase(), status: null })));
+    }
+  };
+
+  const sortedDict = useMemo((): string[] => {
     return [...dictionary].sort((a,b) => a.localeCompare(b));
   }, [dictionary]);
 
-  const filteredDict = useMemo(() => {
+  const filteredDict = useMemo((): string[] => {
     let filtered = [...sortedDict];
 
     if (hideDuplicates) {
@@ -71,20 +83,32 @@ export const WordListPanel: FC = () => {
     return filtered;
   }, [sortedDict, hideDuplicates, dedupe, noCapitals]);
 
-  const wordCount = useMemo(() => {
-    return filteredDict.length;
-  }, [filteredDict]);
+  const candidateWords = useMemo((): string[] => {
+    if (wordLength === 0 || candidateLetters.length === 0 || filteredDict.length == 0) {
+      return [];
+    }
 
-  const title = useMemo(() => {
-    return `${wordCount.toLocaleString()} words`;
-  }, [wordCount]);
-  
+    const regex = buildRegexFromCandidates(wordLength, candidateLetters, [...mustInclude]);
+    console.log({ candidateLetters, mustInclude, regex: regex.source }); // AEG
+    const matches = filteredDict.filter(word => regex.test(word.toUpperCase()));
+
+    return matches;
+  }, [filteredDict, candidateLetters, mustInclude, wordLength]);
+
+  const wordCount = candidateWords.length;
+  const title = `${wordCount.toLocaleString()} words`; 
   const canDisplayWordList = languageCode && wordLength !== 0;
 
   return (
     <Fragment>
       {canDisplayWordList && (
         <Panel id="word-list-panel" title={title} isOpen={isPanelOpen} onToggle={() => setIsPanelOpen(!isPanelOpen)}>
+          {hideDuplicates && mustInclude.size > 0 && (
+            <div className="msg" style={{ alignItems: 'flex-start', marginTop: '15px' }}>
+              <div className="warning">{"The 'No duplicated letter' filter is active - so the word you try to guess might not be listed below"}</div>
+            </div>
+          )}
+
           <div className="controls">
             <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
               <OptionCheckbox
@@ -106,7 +130,17 @@ export const WordListPanel: FC = () => {
           </div>
 
           <div className="word-list">
-            {filteredDict.join(' - ')}
+            {candidateWords.map((word, index) => (
+              <span
+                key={index}
+                style={{ cursor: 'pointer' }}
+                onDoubleClick={() => handleWordDoubleClick(word)}
+              >
+                {word}
+                {/* Add separator after all but the last word */}
+                {index < candidateWords.length - 1 && ' - '}
+              </span>
+            ))}
           </div>
         </Panel>
       )}

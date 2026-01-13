@@ -19,6 +19,7 @@ interface SolverState {
   activeCellIndex: number;        // the active letter position in word. A letter typed will populate that cell
   allLettersEntered: boolean;
   candidateLetters: CandidateLetter[];
+  mustInclude: Set<string>;          // letters that we know must be in hte word (rightPlace or wrongPlace)
   wordFound: boolean;             // set to true when user reached the solution
 
   // Actions to update state vars
@@ -42,6 +43,7 @@ export const useSolverStore = create<SolverState>(set => ({
   colorSet: null,
   grid: [],
   languageCode: null,
+  mustInclude: new Set<string>(),
   statusesConfirmed: false,
   word: [],
   wordConfirmed: false,
@@ -84,12 +86,23 @@ export const useSolverStore = create<SolverState>(set => ({
       }
     });
   },
-  setWord: word => set({ word }),
+  setWord: word => set({
+    allLettersEntered: true,
+    word,
+  }),
+
   setWordConfirmed: () => set({ wordConfirmed: true }),
 
   setGrid: word => {
-    
     set(state => {
+      const newMustInclude = state.mustInclude;
+
+      word.forEach(letter => {
+        if (letter.status === 'rightPlace' || letter.status === 'wrongPlace') {
+          newMustInclude.add(letter.symbol);
+        }
+      })
+
       const newGrid = [...state.grid, word];
       const gridRowCount = newGrid.length;
       const wordFound = newGrid[gridRowCount - 1].every(word => word.status === 'rightPlace');
@@ -98,6 +111,7 @@ export const useSolverStore = create<SolverState>(set => ({
         allLettersEntered: false,
         candidateLetters: updateCandidateLetters(word, state.candidateLetters),
         grid: newGrid,
+        mustInclude: newMustInclude,
         statusesConfirmed: false,
         word: getEmptyWord(state.wordLength),
         wordConfirmed: false,
@@ -106,16 +120,17 @@ export const useSolverStore = create<SolverState>(set => ({
     });
   },
 
-  resetSolver: () => set({
+  resetSolver: () => set( state => ({
     activeCellIndex: 0,
     candidateLetters: [],
+    colorSet: state.colorSet,
     grid: [],
-    languageCode: 'en',
-    colorSet: 'default',
+    languageCode: null,
+    mustInclude: new Set<string>(),
     statusesConfirmed: false,
     word: [],
     wordConfirmed: false,
     wordFound: false,
     wordLength: 0,
-  }),
+  })),
 }));

@@ -7,7 +7,7 @@ export type LanguageCode = typeof LANGUAGE_CODES[number];
 export const LANGUAGE_NAMES = ['English', 'French', 'Spanish', 'German'] as const;
 export type LanguageName = typeof LANGUAGE_NAMES[number];
 
-export const GAME_COLORS = ['Wordle', 'Sutom', 'default'] as const;
+export const GAME_COLORS = ['Wordle', 'Sutom', 'default', 'GridGames'] as const;
 export type GameColors = typeof GAME_COLORS[number];
 
 export const GAME_COUNTRY = ['US', 'FR', 'CO', 'DE'] as const;

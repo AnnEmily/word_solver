@@ -14,9 +14,10 @@ interface KeyRowProps {
 
 export const KeyRow: FC<KeyRowProps> = ({ id, keys }) => {
   const setLetter = useSolverStore(state => state.setLetter);
-  const { activeCellIndex, allLettersEntered } = useSolverStore(useShallow(state => ({
+  const { activeCellIndex, allLettersEntered, wordConfirmed } = useSolverStore(useShallow(state => ({
     activeCellIndex: state.activeCellIndex,
     allLettersEntered: state.allLettersEntered,
+    wordConfirmed: state.wordConfirmed,
   })));
 
   const { theme } = useTheme();
@@ -28,7 +29,7 @@ export const KeyRow: FC<KeyRowProps> = ({ id, keys }) => {
         const isKeyEnter = key === ENTER;
         const isKeyBackSpace = key === BACKSPACE;
         const isActionKey = isKeyEnter || isKeyBackSpace ;
-        const isDisabledKey = (isKeyEnter && !allLettersEntered) || (isKeyBackSpace && activeCellIndex === 0);
+        const isDisabledKey = wordConfirmed || (isKeyEnter && !allLettersEntered) || (isKeyBackSpace && activeCellIndex === 0);
         const keyClass = clsx('key', isActionKey && 'action-key', isKeyEnter && !isDisabledKey && 'button', isDisabledKey && 'disabled');
 
         return (

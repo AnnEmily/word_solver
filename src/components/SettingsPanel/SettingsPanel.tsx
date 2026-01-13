@@ -50,15 +50,14 @@ export const SettingsPanel: FC = () => {
   };
 
   const handleChangeWordLength = (len: number) => {
-    // if (!colorSet) {
-    //   setColorSet('default');
-    // }
+    const prevLanguageCode = languageCode;
     resetSolver();
     setWordLength(len);
+    setLanguageCode(prevLanguageCode);
   };
   
   return (
-    <Panel id="settings-panel" title={"Settings"} isOpen={isPanelOpen} onToggle={() => setIsPanelOpen(!isPanelOpen)}>
+    <Panel id="settings-panel" title={"Game settings"} isOpen={isPanelOpen} onToggle={() => setIsPanelOpen(!isPanelOpen)}>
       <div className="controls">
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
           <SettingSelector

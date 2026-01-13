@@ -1,3 +1,59 @@
+import { CandidateLetter } from "../../shared/types";
+
+export const deriveMustInclude = (length: number, candidates: CandidateLetter[]): string[] => {
+  const byIndex = Array.from({ length }, (_, i) =>
+    new Set(candidates.find(c => c.cellIndex === i)?.symbols ?? [])
+  );
+
+  const allLetters = new Set<string>();
+  byIndex.forEach(set => set.forEach(l => allLetters.add(l)));
+
+  const mustInclude: string[] = [];
+
+  for (const letter of allLetters) {
+    let appearsSomewhere = false;
+    let missingSomewhere = false;
+
+    for (const set of byIndex) {
+      if (set.has(letter)) appearsSomewhere = true;
+      else missingSomewhere = true;
+    }
+
+    if (appearsSomewhere && missingSomewhere) {
+      mustInclude.push(letter);
+    }
+  }
+
+  return mustInclude;
+};
+
+export const buildRegexFromCandidates = (
+  wordLength: number,
+  candidates: CandidateLetter[],
+  mustInclude: string[] = []
+): RegExp => {
+
+  const byIndex = Array.from({ length: wordLength }, (_, i) =>
+    candidates.find(c => c.cellIndex === i)?.symbols ?? []
+  );
+
+  const body = byIndex.map(symbols => {
+    if (symbols.length === 0) return '.';
+    if (symbols.length === 1) return symbols[0];
+    return `[${symbols.join('')}]`;
+  }).join('');
+
+  if (mustInclude.length > 0) {
+    const lookaheads = mustInclude
+      .map(l => `(?=.*${l})`)
+      .join('');
+
+    return new RegExp(`^${lookaheads}${body}$`);
+  }
+
+  return new RegExp(`^${body}$`);
+};
+
 export const dedupeIgnoringDiacriticsAndCase = (
   words: string[]
 ): string[] => {
