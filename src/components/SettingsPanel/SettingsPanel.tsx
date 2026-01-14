@@ -3,19 +3,17 @@ import { useShallow } from 'zustand/shallow';
 import { Checkbox, FormControlLabel } from "@mui/material"
 
 import { Panel } from "../../shared/components";
+import { useSolverStore } from "../../shared/store";
 import { GameColors, LanguageName } from "../../shared/types";
 import { availableWordLengths, games } from "../../shared/constants";
-import { useSolverStore } from "../../shared/store";
 import { languageCodeToName, languageNameToCode } from "../../shared/utilsString";
 
 import { SettingSelector } from "./SettingSelector";
-import { getArrayOptions, getGameOptions } from "./utils";
+import { getArrayOptions, getColorOptions, getGameOptions } from "./utils";
 
 export const SettingsPanel: FC = () => {
   // States for inner control
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(true);
-
-  // States to/from children
   const [provider, setProvider] = useState<string>(null);
   const [openGameOnSelection, setOpenGameOnSelection] = useState<boolean>(false);
 
@@ -25,18 +23,17 @@ export const SettingsPanel: FC = () => {
   const [colorSet, setColorSet] = useSolverStore(useShallow(state => [state.colorSet, state.setColorSet]));
   const resetSolver = useSolverStore(state => state.resetSolver);
 
-  const options = useMemo(()=> {
-    return ({
-      provider: getGameOptions('name'),
-      languageName: getGameOptions('languageCode'),
-      wordLength: getArrayOptions(availableWordLengths),
-      colors: getGameOptions('colorSet'),
-    });
-  }, []);
+  const options = useMemo(()=> ({
+    provider: getGameOptions('name'),
+    languageName: getGameOptions('languageCode'),
+    wordLength: getArrayOptions(availableWordLengths),
+    colors: getColorOptions(),
+  }), []);
 
   const handleChangeProvider = (val: string) => {
     setProvider(val);
     const gameProvider = games.find(g => g.name === val);
+  
     if (gameProvider) {
       setColorSet(gameProvider.colorSet ?? colorSet);
       setWordLength(gameProvider.wordLength ?? wordLength);

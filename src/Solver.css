@@ -214,8 +214,25 @@
     padding: 6px 10px;
     border-radius: 4px;
     overflow-y: scroll;
-    /* AEG review for a dynamic size*/
+    /* AEG review for a dynamic size */
     max-height: 200px;
+
+    & .word {
+      cursor: default;
+      padding: 3px 4px 3px 4px;
+      transition: background-color 0.3s ease-out;
+      user-select: none;
+
+      &.clickable {
+        cursor: pointer;
+
+        &:hover {
+          background-color: rgb(145 145 227);
+          border-radius: 3px;
+          transition-delay: 0.1s;
+        }
+      }
+    }
   }
 }
 

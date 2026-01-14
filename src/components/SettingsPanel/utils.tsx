@@ -8,13 +8,32 @@ import { LanguageCode, GameSet } from '../../shared/types';
 import { languageCodeToName } from '../../shared/utilsString';
 
 export const getArrayOptions = (src: number[]): JSX.Element[] => {
-    const uniqValues = uniq(src).map(v => v.toString()).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-    return uniqValues.map(val => (
-      <MenuItem key={val} value={val}>
-        {val}
-      </MenuItem>
-    ));
-  };
+  const uniqValues = uniq(src).map(v => v.toString()).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  return uniqValues.map(val => (
+    <MenuItem key={val} value={val}>
+      {val}
+    </MenuItem>
+  ));
+};
+
+export const getColorOptions = () => {
+  const ColorBadge = ( p: { color: string }) => (
+    <div className="color-badge" style={{ backgroundColor: p.color }} />
+  );
+
+  const sortedColorSets = sortBy(letterColors, entry => entry.colorSet.toLowerCase());
+
+  return sortedColorSets.map((entry, index) => (
+    <MenuItem key={index} value={entry.colorSet}>
+      <div style={{ display: 'flex', gap: '5px', alignItems: 'center', paddingRight: '10px' }}>
+        <ColorBadge color={entry.rightPlace} />
+        <ColorBadge color={entry.wrongPlace} />
+        <ColorBadge color={entry.notIncluded} />
+      </div>
+      <div>{entry.colorSet}</div>
+    </MenuItem>
+  ));
+};
 
 export const getGameOptions = (field: keyof GameSet): JSX.Element[] => {
   const ColorBadge = ( p: { color: string }) => {
@@ -35,20 +54,22 @@ export const getGameOptions = (field: keyof GameSet): JSX.Element[] => {
 
     if (field === 'name') {
       element = <><CountryFlag countryCode={entry.country} svg style={{ width: '20px', paddingRight: '10px' }}/><div>{entry.field}</div></>;
-    } else if (field === 'colorSet') {
-      const colorSet = letterColors.find(lc => lc.colorSet === entry.colorSet);
-
-      element = (
-        <>
-          <div style={{ display: 'flex', gap: '5px', alignItems: 'center', paddingRight: '10px' }}>
-            <ColorBadge color={colorSet?.rightPlace} />
-            <ColorBadge color={colorSet?.wrongPlace} />
-            <ColorBadge color={colorSet?.notIncluded} />
-          </div>
-          <div>{entry.field}</div>
-        </>
-      );
     }
+    // AEG remove
+    // else if (field === 'colorSet') {
+    //   const colorSet = letterColors.find(lc => lc.colorSet === entry.colorSet);
+
+    //   element = (
+    //     <>
+    //       <div style={{ display: 'flex', gap: '5px', alignItems: 'center', paddingRight: '10px' }}>
+    //         <ColorBadge color={colorSet?.rightPlace} />
+    //         <ColorBadge color={colorSet?.wrongPlace} />
+    //         <ColorBadge color={colorSet?.notIncluded} />
+    //       </div>
+    //       <div>{entry.field}</div>
+    //     </>
+    //   );
+    // }
 
     return (
       <MenuItem key={entry.field} value={entry.field}>

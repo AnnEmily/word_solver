@@ -1,5 +1,6 @@
 import { FC, Fragment, useEffect, useMemo, useState } from "react";
 import { useShallow } from 'zustand/shallow';
+import clsx from "clsx";
 
 const dictionaries = import.meta.glob('../../dico/*/*.js');
 
@@ -58,7 +59,7 @@ export const WordListPanel: FC = () => {
     }
   }, [languageCode, wordLength]);
 
-  const handleWordDoubleClick = (word: string) => {
+  const handleWordClick = (word: string) => {
     if (!wordConfirmed) {
       setWord(word.split('').map(letter => ({ symbol: letter.toUpperCase(), status: null })));
     }
@@ -98,6 +99,7 @@ export const WordListPanel: FC = () => {
   const wordCount = candidateWords.length;
   const title = `${wordCount.toLocaleString()} words`; 
   const canDisplayWordList = languageCode && wordLength !== 0;
+  const oneOptionMissing = (languageCode && wordLength === 0) || (!languageCode && wordLength > 0);
 
   return (
     <Fragment>
@@ -105,14 +107,14 @@ export const WordListPanel: FC = () => {
         <Panel id="word-list-panel" title={title} isOpen={isPanelOpen} onToggle={() => setIsPanelOpen(!isPanelOpen)}>
           {hideDuplicates && mustInclude.size > 0 && (
             <div className="msg" style={{ alignItems: 'flex-start', marginTop: '15px' }}>
-              <div className="warning">{"The 'No duplicated letter' filter is active - so the word you try to guess might not be listed below"}</div>
+              <div className="warning">{"The 'No repeated letter' filter is active - so the word you try to guess might not be listed below"}</div>
             </div>
           )}
 
           <div className="controls">
             <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
               <OptionCheckbox
-                label="No duplicated letters"
+                label="No repeated letters"
                 checked={hideDuplicates}
                 onToggle={() => setHideDuplicates(!hideDuplicates)}
               />
@@ -122,7 +124,7 @@ export const WordListPanel: FC = () => {
                 onToggle={() => setNoCapitals(!noCapitals)}
               />
               <OptionCheckbox
-                label="Dedupe similar words"
+                label="No similar words"
                 checked={dedupe}
                 onToggle={() => setDedupe(!dedupe)}
               />
@@ -130,22 +132,25 @@ export const WordListPanel: FC = () => {
           </div>
 
           <div className="word-list">
-            {candidateWords.map((word, index) => (
-              <span
-                key={index}
-                style={{ cursor: 'pointer' }}
-                onDoubleClick={() => handleWordDoubleClick(word)}
-              >
-                {word}
-                {/* Add separator after all but the last word */}
-                {index < candidateWords.length - 1 && ' - '}
-              </span>
-            ))}
+            {candidateWords.map((word, index) => {
+              const wordClass = clsx("word", !wordConfirmed && "clickable");
+              return (
+                <>
+                  <span key={index} className={wordClass} onDoubleClick={() => handleWordClick(word)}>
+                    {word}
+                  </span>
+                  <span>
+                    {/* Add separator after all but the last word */}
+                    {index < candidateWords.length - 1 && '-'}
+                  </span>
+                </>
+              );
+            })}
           </div>
         </Panel>
       )}
 
-      {!canDisplayWordList && (
+      {!canDisplayWordList && oneOptionMissing && (
         <div className="msg">
           <div className="warning">{"You need to select both a language and a word length to view the word list"}</div>
         </div>
