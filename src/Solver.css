@@ -21,7 +21,7 @@
 }
 
 .panel {
-  padding: 10px 16px;
+  padding: 0px 16px;
   border-radius: 8px;
 
   &.dark {
@@ -52,11 +52,17 @@
 .game-setting {
   display: flex;
   flex-direction: column;
+  --error-color: #dc0000;
 
   & .label {
     font-size: 0.85rem;
     padding-bottom: 4px;
     letter-spacing: 0.8px;
+
+    &.required::after {
+      margin-left: 8px;
+      content: '*';
+    }
   }
 
   & .MuiInputBase-root {
@@ -64,6 +70,10 @@
     color: #000000;
     background-color: #dcdcdc;
     border: 1px solid white;
+
+    /* &.hasError {
+      border: 1px solid var(--error-color);
+    } */
 
     & .MuiSelect-select {
       display: flex;
@@ -74,16 +84,43 @@
       border: 0px;
     }
   }
+
+  & .error-helper {
+    height: 20px;
+    font-size: smaller;
+    color: var(--error-color);
+  }
 }
 
 #settings-panel {
+  margin-top: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+
   & .controls {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 24px;
+    column-gap: 24px;
+    row-gap: 10px;
     margin-top: 16px;
   }
+}
+
+/* from https://css-loaders.com/square/ */
+/* fading dots */
+.loader {
+  width: 10px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  filter: invert(100%);
+  animation: l5 1s infinite linear alternate;
+}
+@keyframes l5 {
+    0%  {box-shadow: 20px 0 #000, -20px 0 #0002;background: #000 }
+    33% {box-shadow: 20px 0 #000, -20px 0 #0002;background: #0002}
+    66% {box-shadow: 20px 0 #0002,-20px 0 #000; background: #0002}
+    100%{box-shadow: 20px 0 #0002,-20px 0 #000; background: #000 }
 }
 
 /* from https://getcssscan.com/css-buttons-examples */
@@ -96,7 +133,7 @@
   cursor: pointer;
   display: inline-block;
   font-family: Inter,-apple-system,system-ui,Roboto,"Helvetica Neue",Arial,sans-serif;
-  height: 40px;
+  height: 33px;
   line-height: 40px;
   outline: 0;
   overflow: hidden;
@@ -117,6 +154,7 @@
 
 /* Messages */
 .msg {
+  height: 68px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -137,7 +175,7 @@
 
 /* Keyboard styles */
 .keyboard {
-  margin-top: 16px;
+  /* margin-top: 16px; */
 }
 
 .keyrow {
@@ -199,6 +237,8 @@
 
 /* Word list styles */
 #word-list-panel {
+  margin-top: 8px;
+
   & .controls {
     margin-top: 12px;
     display: flex;
@@ -238,14 +278,14 @@
 
 /* Grid styles */
 .grid {
-  margin-top: 16px;
+  /* margin-top: 16px; */
 }
 
 .gridrow {
   display: flex;
   flex-direction: column;
   /* justify-content: center; */
-  margin-bottom: 8px;
+  /* margin-bottom: 8px; */
 
   & .row {
     display: flex;
@@ -255,7 +295,7 @@
   & .cell {
     border: 1px solid #888;
     border-radius: 4px;
-    margin: 0 4px;
+    margin: 8px 4px 0px 4px;
     background-color: #00000000;
     user-select: none;
     font-weight: bold;

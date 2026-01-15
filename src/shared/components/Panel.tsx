@@ -16,7 +16,7 @@ interface PanelProps {
 
 export const Panel: FC<PanelProps> = ({ id, title, isOpen, onToggle, children }) => {
   const { theme } = useTheme();
-  const className = clsx('panel', theme)
+  const className = clsx('panel', theme);
 
   return (
     <div id={id} className={className}>

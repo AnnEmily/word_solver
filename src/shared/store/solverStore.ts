@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
 import { CandidateLetter, GameColors, Grid, LanguageCode, Word } from '../types';
 import { BACKSPACE, ENTER } from '../constants';
 import { getEmptyWord, getInitialCandidateLetters, updateCandidateLetters } from './utilsStore';
@@ -81,7 +81,7 @@ export const useSolverStore = create<SolverState>(set => ({
       } else {
         // Normal letter input
         const newWord = [...state.word];
-        newWord[state.activeCellIndex] = { symbol: letter, status: null};
+        newWord[state.activeCellIndex] = { symbol: letter, status: null };
         const newActiveCellIndex = (state.activeCellIndex === state.wordLength - 1) ? state.activeCellIndex : state.activeCellIndex + 1;
         const newAllLettersEntered = newWord.every(letter => letter.symbol !== '');
         return { word: newWord, activeCellIndex: newActiveCellIndex, allLettersEntered: newAllLettersEntered };
@@ -103,7 +103,7 @@ export const useSolverStore = create<SolverState>(set => ({
         if (letter.status === 'rightPlace' || letter.status === 'wrongPlace') {
           newMustInclude.add(letter.symbol);
         }
-      })
+      });
 
       const newGrid = [...state.grid, word];
       const gridRowCount = newGrid.length;
@@ -118,7 +118,7 @@ export const useSolverStore = create<SolverState>(set => ({
         word: getEmptyWord(state.wordLength),
         wordConfirmed: false,
         wordFound,
-      }
+      };
     });
   },
 

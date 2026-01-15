@@ -10,7 +10,7 @@ import { getAllowedStatuses, getBgColorStyle } from "./utils";
 import "../../Solver.css";
 
 const menuStyle = {
-  '& .MuiMenu-list': { padding: '0px !important'},
+  '& .MuiMenu-list': { padding: '0px !important' },
   '& .MuiMenuItem-root': { padding: '0px !important', minHeight: '0px' },
 };
 
@@ -80,7 +80,7 @@ export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true, rowIn
 
   const handleClickLetter = (event: MouseEvent<HTMLElement>, index: number) => {
     if (wordConfirmed || rowIndex !== null) {
-      setMenuState({ anchorEl: event.currentTarget, cellIndex: index });  
+      setMenuState({ anchorEl: event.currentTarget, cellIndex: index });
     } else {
       setActiveCellIndex(index);
     }
@@ -91,7 +91,7 @@ export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true, rowIn
   };
 
   const handleSelectStatus = (status: LetterStatus) => {
-    const newWord = word.map((cell, index) => index === menuState.cellIndex ? { ...cell, status} : cell );
+    const newWord = word.map((cell, index) => index === menuState.cellIndex ? { ...cell, status } : cell );
     setWord(newWord);
     handleCloseMenu();
   };
@@ -124,16 +124,17 @@ export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true, rowIn
           statusChange = true;
           word[index].status = statusArray[0];
         }
-      })
+      });
 
       if (statusChange) {
-        setWord(word)
+        setWord(word);
       }
     }
   }, [allowedStatuses, word, setWord]);
 
   const open = Boolean(menuState.anchorEl);
   const className = clsx("gridrow", useTheme().theme);
+  const allStatusesSet = word.every(letter => letter.status);
 
   return (
     <div id={id} className={className}>
@@ -179,28 +180,32 @@ export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true, rowIn
         </Menu>
       )}
 
-      {isActiveWord && wordConfirmed && colorSet && !statusesConfirmed && !contradictoryletter && (            
-        <div className="msg">
-          <div className="info">{"Click on each letter to set its status"}</div>
-          
-          {word.every(letter => letter.status) && (
-            <Button
-              variant="contained"
-              className="button"
-              sx={{ width: 'auto', marginTop: '10px' }}
-              onClick={() => setGrid(word)}
-            >
-              {"Done"}
-            </Button>
-          )}
-        </div>
-      )}
+      <div className="msg" style={{ display: isActiveWord ? 'inherit' : 'none' }}>
+        {wordConfirmed && !colorSet && <div className="warning">{"You need to select a color set"}</div>}
 
-      {contradictoryletter && (
-        <div className="msg">
+        {isActiveWord && wordConfirmed && colorSet && !statusesConfirmed && !contradictoryletter && (
+          <>
+            {!allStatusesSet && (
+              <div className="info">{"Click on each letter to set its status"}</div>
+            )}
+            
+            {allStatusesSet && (
+              <Button
+                variant="contained"
+                className="button"
+                sx={{ width: 'auto' }}
+                onClick={() => setGrid(word)}
+              >
+                {"Done"}
+              </Button>
+            )}
+          </>
+        )}
+
+        {contradictoryletter && (
           <div className="error">{`Letter ${contradictoryletter} cannot be both included and excluded from the word`}</div>
-        </div>        
-      )}
+        )}
+      </div>
     </div>
   );
 };

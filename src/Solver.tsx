@@ -8,7 +8,7 @@ import './Solver.css';
 
 export const Solver: FC = () => {
   const { theme } = useTheme();
-  const className = clsx('solver', theme)
+  const className = clsx('solver', theme);
 
   return (
     <div id="solver" className={className}>

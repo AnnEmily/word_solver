@@ -1,6 +1,6 @@
 import { FC, useMemo, useState } from "react";
 import { useShallow } from 'zustand/shallow';
-import { Checkbox, FormControlLabel } from "@mui/material"
+import { Checkbox, FormControlLabel } from "@mui/material";
 
 import { Panel } from "../../shared/components";
 import { useSolverStore } from "../../shared/store";
@@ -14,7 +14,7 @@ import { getArrayOptions, getColorOptions, getGameOptions } from "./utils";
 export const SettingsPanel: FC = () => {
   // States for inner control
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(true);
-  const [provider, setProvider] = useState<string>(null);
+  const [provider, setProvider] = useState<string>('');
   const [openGameOnSelection, setOpenGameOnSelection] = useState<boolean>(false);
 
   // States to/from the store
@@ -53,20 +53,25 @@ export const SettingsPanel: FC = () => {
     setLanguageCode(prevLanguageCode);
   };
   
+  // Flag missing options only when user began entering some of them
+  const optionsCount = (languageCode ? 1 : 0) + (wordLength > 0 ? 1 : 0) + (colorSet ? 1 : 0);
+  const missingOptions = optionsCount > 0 && optionsCount < 3;
+
   return (
     <Panel id="settings-panel" title={"Game settings"} isOpen={isPanelOpen} onToggle={() => setIsPanelOpen(!isPanelOpen)}>
       <div className="controls">
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <SettingSelector
             id="provider"
             label="Game"
             value={provider}
             options={options.provider}
             onSelect={handleChangeProvider}
+            required={false}
           />
           <FormControlLabel control={
             <Checkbox sx={{ color: '#7e7e7e' }} onChange={() => setOpenGameOnSelection(!openGameOnSelection)} />
-          } label="Open game on selection" />
+          } label="Open game on selection" sx={{ height: '15px', marginBottom: '10px' }} />
         </div>
 
         <SettingSelector
@@ -75,20 +80,23 @@ export const SettingsPanel: FC = () => {
           value={languageCodeToName(languageCode)}
           options={options.languageName}
           onSelect={val => setLanguageCode(languageNameToCode(val as LanguageName) )}
+          missingOptions={missingOptions}
         />
         <SettingSelector
           id="word-length"
           label="Word Length"
-          value={wordLength?.toString() ?? ''}
+          value={wordLength > 0 ? wordLength.toString() : ''}
           options={options.wordLength}
           onSelect={val => handleChangeWordLength(Number(val))}
+          missingOptions={missingOptions}
         />
         <SettingSelector
           id="colors"
           label="Color Set"
-          value={colorSet}
+          value={colorSet ?? ''}
           options={options.colors}
           onSelect={val => setColorSet(val as GameColors)}
+          missingOptions={missingOptions}
         />
       </div>
       

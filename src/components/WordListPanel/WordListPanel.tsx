@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, Fragment, useEffect, useMemo, useState } from "react";
 import { useShallow } from 'zustand/shallow';
 import clsx from "clsx";
 
@@ -25,11 +25,11 @@ export const WordListPanel: FC = () => {
     setWord: state.setWord,
     wordConfirmed: state.wordConfirmed,
     wordLength: state.wordLength,
-  })))
+  })));
 
   // States from file loading
   const [dictionary, setDictionary] = useState<string[] | null>(null);
-  const [_isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingError, setLoadingError] = useState<string>(null);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export const WordListPanel: FC = () => {
       const module = await loader() as { Dictionary: string[] };
 
       return { dict: module.Dictionary, dictPath };
-    }
+    };
 
     loadDictionary(languageCode, wordLength)
       .then(({ dict, dictPath }) => {
@@ -106,7 +106,7 @@ export const WordListPanel: FC = () => {
 
   const wordCount = candidateWords.length;
   const title = `${wordCount.toLocaleString()} words`; 
-  const canDisplayWordList = languageCode && wordLength !== 0 && !loadingError;
+  const canDisplayWordList = languageCode && wordLength !== 0 && !isLoading && !loadingError;
   const oneOptionMissing = (languageCode && wordLength === 0) || (!languageCode && wordLength > 0);
 
   return (
@@ -143,15 +143,15 @@ export const WordListPanel: FC = () => {
             {candidateWords.map((word, index) => {
               const wordClass = clsx("word", !wordConfirmed && "clickable");
               return (
-                <>
-                  <span key={index} className={wordClass} onDoubleClick={() => handleWordClick(word)}>
+                <Fragment key={index}>
+                  <span className={wordClass} onDoubleClick={() => handleWordClick(word)}>
                     {word}
                   </span>
                   <span>
                     {/* Add separator after all but the last word */}
                     {index < candidateWords.length - 1 && '-'}
                   </span>
-                </>
+                </Fragment>
               );
             })}
           </div>
@@ -161,6 +161,13 @@ export const WordListPanel: FC = () => {
       {!canDisplayWordList && oneOptionMissing && !loadingError && (
         <div className="msg">
           <div className="warning">{"You need to select both a language and a word length to view the word list"}</div>
+        </div>
+      )}
+
+      {isLoading  && (
+        <div className="msg">
+          <div className="info" style={{ marginBottom: '10px' }}>{"Loading dictionary..."}</div>
+          <div className="loader" />
         </div>
       )}
 

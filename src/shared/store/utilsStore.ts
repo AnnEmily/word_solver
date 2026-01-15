@@ -31,7 +31,7 @@ export const updateCandidateLetters = (word: Word, prevCandidateLetters: Candida
         // Current letter.symbol must be removed everywhere from candidate symbols
         candidateLetters.forEach((entry, cellIndex) => {
           candidateLetters[cellIndex].symbols = entry.symbols.filter(symb => symb !== letter.symbol);
-        })
+        });
         break;
       default:
         assertExhaustive(letter.status);

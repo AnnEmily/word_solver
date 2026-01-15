@@ -10,14 +10,12 @@ import '../../Solver.css';
 import KeyRow from "./KeyRow";
 
 export const Keyboard: FC = () => {
-  const { colorSet, wordConfirmed, wordFound, wordLength } = useSolverStore(useShallow(state => ({
-    colorSet: state.colorSet,
-    wordConfirmed: state.wordConfirmed,
+  const { wordFound, wordLength } = useSolverStore(useShallow(state => ({
     wordFound: state.wordFound,
     wordLength: state.wordLength,
   })));
 
-  const className = clsx('keyboard', useTheme().theme)
+  const className = clsx('keyboard', useTheme().theme);
   
   return (
     <div id="keyboard" className={className}>
@@ -27,10 +25,6 @@ export const Keyboard: FC = () => {
             <KeyRow key={index} id={`kb-row${index + 1}`} keys={row} />
           ))}
         </div>
-      )}
-
-      {!wordFound && wordConfirmed && !colorSet && (
-        <div className="msg warning">{"You need to select a color set"}</div>
       )}
 
       {wordFound && (

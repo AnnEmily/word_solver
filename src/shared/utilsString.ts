@@ -9,13 +9,13 @@ export const insensitiveSort = (a: string, b: string) => {
   return a.localeCompare(b, undefined, { sensitivity: 'base', numeric: true });
 };
 
-export const languageCodeToName = (code: LanguageCode): LanguageName => {
+export const languageCodeToName = (code: LanguageCode): LanguageName | '' => {
   switch (code) {
     case 'en': return 'English';
     case 'fr': return 'French';
     case 'es': return 'Spanish';
     case 'de': return 'German';
-    case null: return null;
+    case null: return '';
     default: assertExhaustive(code);
   }
 };
