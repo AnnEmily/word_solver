@@ -40,7 +40,7 @@ export const games: GameSet[] = [
 ];
 
 export const letterColors: LetterColors[] = [
-  { id: 1, colorSet: 'Wordle', rightPlace: '#5ca755', wrongPlace: '#ad9738', notIncluded: '#787c7e' },
+  { id: 1, colorSet: 'Wordle', rightPlace: '#538D4E', wrongPlace: '#B59F3B', notIncluded: '#3A3A3C' },
   { id: 2, colorSet: 'Sutom', rightPlace: '#e7002a', wrongPlace: '#ffbd00', notIncluded: '#0077c7' },
   { id: 3, colorSet: 'default', rightPlace: '#32c232', wrongPlace: '#fbbd08', notIncluded: '#ff0000' },
   { id: 4, colorSet: 'GridGames', rightPlace: '#55BB55', wrongPlace: '#D8AE30', notIncluded: '#555555' },

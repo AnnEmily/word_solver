@@ -15,6 +15,8 @@ export const getAllowedStatuses = (
   grid: Grid,
   candidateLetters: CandidateLetter[],
 ): LetterStatus[] => {
+  const log = false; // turn on if needed
+
   if (rowIndex !== null) {
     // User clicked in a grid cell where user already confirmed the status
     return [grid[rowIndex][cellIndex].status as LetterStatus];
@@ -25,7 +27,7 @@ export const getAllowedStatuses = (
 
   // No symbol, then all statuses possible
   if (letter.symbol === EMPTY_SYMBOL) {
-    console.log('path A for index = ' + cellIndex);
+    if (log) console.log('path A for index = ' + cellIndex);
     return ['rightPlace', 'wrongPlace', 'notIncluded'];
   }
 
@@ -33,7 +35,7 @@ export const getAllowedStatuses = (
   const allSymbols = candidateLetters.flatMap(cl => cl.symbols);
   const symbolNotFound = allSymbols.find(s => s === letter.symbol) === undefined;
   if (symbolNotFound) {
-    console.log('path B for index = ' + cellIndex);
+    if (log) console.log('path B for index = ' + cellIndex);
     return ['notIncluded'];
   }
 
@@ -42,18 +44,18 @@ export const getAllowedStatuses = (
   // Case of a cell whose symbol is in rightPLace
   if (candidateLetters[cellIndex].symbols.length === 1) {
     if (candidateLetters[cellIndex].symbols.includes(letter.symbol)) {
-      console.log('path C1 for index = ' + cellIndex);
+      if (log) console.log('path C1 for index = ' + cellIndex);
       return ['rightPlace'];
     }
 
     if (!unsureEntries.every(entry => entry.symbols.includes(letter.symbol))) {
       // That symbol was declared wrong place befoe, then it still is
-      console.log('path C2 for index = ' + cellIndex);
+      if (log) console.log('path C2 for index = ' + cellIndex);
       return ['wrongPlace'];
     }
 
     // That symbol was never teste before
-    console.log('path C3 for index = ' + cellIndex);
+    if (log) console.log('path C3 for index = ' + cellIndex);
     return ['wrongPlace', 'notIncluded'];
   }
 
@@ -62,17 +64,17 @@ export const getAllowedStatuses = (
   // Considering letters that were declared in the right place before
   if (sureEntries.some(entry => entry.symbols.includes(letter.symbol))) {
     if (candidateLetters[cellIndex].symbols.length === 1 && candidateLetters[cellIndex].symbols[0] === letter.symbol) {
-      console.log('path D1 for index = ' + cellIndex);
+      if (log) console.log('path D1 for index = ' + cellIndex);
       return ['rightPlace'];
     } else {
-      console.log('path D2 for index = ' + cellIndex);
+      if (log) console.log('path D2 for index = ' + cellIndex);
       return ['rightPlace', 'wrongPlace'];
     }
   }
 
   // Case of a symbol that was never submitted
   if (unsureEntries.every(entry => entry.symbols.includes(letter.symbol))) {
-    console.log('path E for index = ' + cellIndex);
+    if (log) console.log('path E for index = ' + cellIndex);
     return ['rightPlace', 'wrongPlace', 'notIncluded'];
   }
 
@@ -81,10 +83,10 @@ export const getAllowedStatuses = (
   // Case of a symbol that was declared wrong, but is in fact left in only one candidate
   if (unsureContainingSymbol.length === 1) {
     if (unsureContainingSymbol[0].cellIndex === cellIndex) {
-      console.log('path F1 for index = ' + cellIndex);
+      if (log) console.log('path F1 for index = ' + cellIndex);
       return ['rightPlace'];
     } else {
-      console.log('path F2 for index = ' + cellIndex);
+      if (log) console.log('path F2 for index = ' + cellIndex);
       return ['wrongPlace'];
     }
   }
@@ -92,11 +94,11 @@ export const getAllowedStatuses = (
   // Case of a symbol that was declared wrong, but that is left in many candidate
 
   if (unsureContainingSymbol.length > 1) {
-      console.log('path G for index = ' + cellIndex);
+      if (log) console.log('path G for index = ' + cellIndex);
       return ['rightPlace', 'wrongPlace'];
   }
 
-  console.log('path default for index = ' + cellIndex);
+  if (log) console.log('path default for index = ' + cellIndex);
   return [...LETTER_STATUS];
 };
 

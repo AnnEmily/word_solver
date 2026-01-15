@@ -36,10 +36,6 @@ export const getColorOptions = () => {
 };
 
 export const getGameOptions = (field: keyof GameSet): JSX.Element[] => {
-  const ColorBadge = ( p: { color: string }) => {
-    return <div className="color-badge" style={{ backgroundColor: p.color }} />;
-  };
-
   const shortEntries = games.map(g => ({
     field: field !== 'languageCode' ? g[field].toString() : languageCodeToName(g[field] as LanguageCode),
     country: g.country,
@@ -55,21 +51,6 @@ export const getGameOptions = (field: keyof GameSet): JSX.Element[] => {
     if (field === 'name') {
       element = <><CountryFlag countryCode={entry.country} svg style={{ width: '20px', paddingRight: '10px' }}/><div>{entry.field}</div></>;
     }
-    // AEG remove
-    // else if (field === 'colorSet') {
-    //   const colorSet = letterColors.find(lc => lc.colorSet === entry.colorSet);
-
-    //   element = (
-    //     <>
-    //       <div style={{ display: 'flex', gap: '5px', alignItems: 'center', paddingRight: '10px' }}>
-    //         <ColorBadge color={colorSet?.rightPlace} />
-    //         <ColorBadge color={colorSet?.wrongPlace} />
-    //         <ColorBadge color={colorSet?.notIncluded} />
-    //       </div>
-    //       <div>{entry.field}</div>
-    //     </>
-    //   );
-    // }
 
     return (
       <MenuItem key={entry.field} value={entry.field}>

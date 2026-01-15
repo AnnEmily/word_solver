@@ -17,9 +17,6 @@ export const WordListPanel: FC = () => {
   const [dedupe, setDedupe] = useState<boolean>(true);
   const [noCapitals, setNoCapitals] = useState<boolean>(true);
 
-  // States from file loading
-  const [dictionary, setDictionary] = useState<string[]>([]);
-
   // States to/from the store
   const { candidateLetters, languageCode, mustInclude, setWord, wordConfirmed, wordLength } = useSolverStore(useShallow(state => ({
     candidateLetters: state.candidateLetters,
@@ -30,9 +27,18 @@ export const WordListPanel: FC = () => {
     wordLength: state.wordLength,
   })))
 
-  const loadDictionary = async (language: LanguageCode, wordLength: number): Promise<any> => {
+  // States from file loading
+  const [dictionary, setDictionary] = useState<string[] | null>(null);
+  const [_isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (languageCode && wordLength) {
+
+    const loadDictionary = async (language: LanguageCode, wordLength: number): Promise<any> => {
       // Load words from file. Assuming files are named as XX/YY.js where XX is the language 
       // code and YY is the word length.
+
+      setIsLoading(true);
 
       const root = '../../dico';
       const name = `${wordLength.toString().length === 1 ? '0' + wordLength.toString() : wordLength.toString()}`;
@@ -47,17 +53,15 @@ export const WordListPanel: FC = () => {
       const module = await loader() as { Dictionary: string[] };
 
       return { dict: module.Dictionary, dictPath };
-  }
+    }
 
-  useEffect(() => {
-    if (languageCode && wordLength) {
-      loadDictionary(languageCode, wordLength)
-        .then(({ dict, dictPath }) => {
-          console.log(`Loaded dictionary from ${dictPath} with ${dict.length} words.`);
-          setDictionary(dict);
+    loadDictionary(languageCode, wordLength)
+      .then(({ dict, dictPath }) => {
+        console.log(`Loaded dictionary from ${dictPath} with ${dict.length} words.`);
+        setDictionary(dict);
       });
     }
-  }, [languageCode, wordLength]);
+}, [languageCode, wordLength]);
 
   const handleWordClick = (word: string) => {
     if (!wordConfirmed) {
@@ -90,7 +94,6 @@ export const WordListPanel: FC = () => {
     }
 
     const regex = buildRegexFromCandidates(wordLength, candidateLetters, [...mustInclude]);
-    console.log({ candidateLetters, mustInclude, regex: regex.source }); // AEG
     const matches = filteredDict.filter(word => regex.test(word.toUpperCase()));
 
     return matches;

@@ -135,18 +135,13 @@ export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true, rowIn
   const open = Boolean(menuState.anchorEl);
   const className = clsx("gridrow", useTheme().theme);
 
-  console.log('allowedStatuses', allowedStatuses);
-
   return (
     <div id={id} className={className}>
       <div className="row">
         {word.map((cell, index) => {
           const isActive = isActiveWord && !wordConfirmed && index === activeCellIndex;
           const cellClass = clsx("cell", isActive && "active", "clickable");
-
-          const singlePossibleStatus = allowedStatuses[index].length === 1 ? allowedStatuses[index][0] : null
-          const status = cell.status !== null ? cell.status : singlePossibleStatus ;
-          const cellStyle = getBgColorStyle(status, colorSet);
+          const cellStyle = getBgColorStyle(cell.status, colorSet);
 
           return (
             <div key={index} className={cellClass} style={cellStyle} onClick={e => handleClickLetter(e, index)}>
