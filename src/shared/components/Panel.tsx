@@ -20,7 +20,7 @@ export const Panel: FC<PanelProps> = ({ id, title, isOpen, onToggle, children })
 
   return (
     <div id={id} className={className}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'anchor-center' }}>
+      <div  onClick={onToggle} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'anchor-center', cursor: 'pointer' }}>
         <div className={'panel-title'}>{title}</div>
         <CollapseButton isExpanded={isOpen} onToggle={onToggle} />
       </div>

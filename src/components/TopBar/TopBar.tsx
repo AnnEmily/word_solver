@@ -1,10 +1,11 @@
 import { FC } from 'react';
-import ThemeSelector from "./ThemeSelector";
+import _ThemeSelector from "./ThemeSelector";
 
 export const TopBar: FC = () => {
   return (
-    <div id="topbar" style={{ display: 'flex', justifyContent: 'flex-end' }}>
-      <ThemeSelector />
+    <div id="topbar">
+      <div>{"WORD SOLVER"}</div>
+      {/* <ThemeSelector /> */}
     </div>
     
   );

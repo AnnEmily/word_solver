@@ -36,7 +36,7 @@ export const WordListPanel: FC = () => {
     if (languageCode && wordLength) {
 
     const loadDictionary = async (language: LanguageCode, wordLength: number): Promise<any> => {
-      // Load words from file. Assuming files are named as XX/YY.js where XX is the language 
+      // Load words from file. Assuming files are named as XX/YY.js where XX is the language
       // code and YY is the word length.
 
       setIsLoading(true);
@@ -105,7 +105,7 @@ export const WordListPanel: FC = () => {
   }, [filteredDict, candidateLetters, mustInclude, wordLength]);
 
   const wordCount = candidateWords.length;
-  const title = `${wordCount.toLocaleString()} words`; 
+  const title = `${wordCount.toLocaleString()} words`;
   const canDisplayWordList = languageCode && wordLength !== 0 && !isLoading && !loadingError;
   const oneOptionMissing = (languageCode && wordLength === 0) || (!languageCode && wordLength > 0);
 
@@ -158,11 +158,11 @@ export const WordListPanel: FC = () => {
         </Panel>
       )}
 
-      {!canDisplayWordList && oneOptionMissing && !loadingError && (
+      {/* AEG {!canDisplayWordList && oneOptionMissing && !loadingError && (
         <div className="msg">
           <div className="warning">{"You need to select both a language and a word length to view the word list"}</div>
         </div>
-      )}
+      )} */}
 
       {isLoading  && (
         <div className="msg">

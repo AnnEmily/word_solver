@@ -15,6 +15,14 @@
   }
 }
 
+#topbar {
+  margin-top: 0px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
 .panel-title {
   font-weight: bold;
   font-size: 1.3rem;
@@ -52,6 +60,7 @@
 .game-setting {
   display: flex;
   flex-direction: column;
+  user-select: none;
   --error-color: #dc0000;
 
   & .label {
@@ -93,9 +102,7 @@
 }
 
 #settings-panel {
-  margin-top: 12px;
   margin-bottom: 16px;
-  padding-bottom: 16px;
 
   & .controls {
     display: flex;
