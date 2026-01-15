@@ -1,14 +1,14 @@
-import { FC, Fragment, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { useShallow } from 'zustand/shallow';
 import clsx from "clsx";
-
-const dictionaries = import.meta.glob('../../dico/*/*.js');
 
 import { OptionCheckbox } from "./OptionCheckbox";
 import { buildRegexFromCandidates, dedupeIgnoringDiacriticsAndCase, filterDuplicatedLetters, removeWordsWithCapitals } from "./utils";
 import { Panel } from "../../shared/components";
 import { useSolverStore } from "../../shared/store";
 import { LanguageCode } from "../../shared/types";
+
+const dictionaries = import.meta.glob('../../dico/*/*.js');
 
 export const WordListPanel: FC = () => {
   // States for inner control
@@ -30,6 +30,7 @@ export const WordListPanel: FC = () => {
   // States from file loading
   const [dictionary, setDictionary] = useState<string[] | null>(null);
   const [_isLoading, setIsLoading] = useState<boolean>(false);
+  const [loadingError, setLoadingError] = useState<string>(null);
 
   useEffect(() => {
     if (languageCode && wordLength) {
@@ -59,9 +60,11 @@ export const WordListPanel: FC = () => {
       .then(({ dict, dictPath }) => {
         console.log(`Loaded dictionary from ${dictPath} with ${dict.length} words.`);
         setDictionary(dict);
-      });
+      })
+      .catch(err => setLoadingError(err))
+      .finally(() => setIsLoading(false));
     }
-}, [languageCode, wordLength]);
+  }, [languageCode, wordLength]);
 
   const handleWordClick = (word: string) => {
     if (!wordConfirmed) {
@@ -70,42 +73,44 @@ export const WordListPanel: FC = () => {
   };
 
   const sortedDict = useMemo((): string[] => {
-    return [...dictionary].sort((a,b) => a.localeCompare(b));
+    return dictionary ? [...dictionary].sort((a,b) => a.localeCompare(b)) : null;
   }, [dictionary]);
 
   const filteredDict = useMemo((): string[] => {
-    let filtered = [...sortedDict];
+    if (sortedDict) {
+      let filtered = [...sortedDict];
 
-    if (hideDuplicates) {
-      filtered = filterDuplicatedLetters(filtered, !hideDuplicates);
+      if (hideDuplicates) {
+        filtered = filterDuplicatedLetters(filtered, !hideDuplicates);
+      }
+      if (dedupe) {
+        filtered = dedupeIgnoringDiacriticsAndCase(filtered);
+      }
+      if (noCapitals) {
+        filtered = removeWordsWithCapitals(filtered);
+      }
+      return filtered;
     }
-    if (dedupe) {
-      filtered = dedupeIgnoringDiacriticsAndCase (filtered);
-    }
-    if (noCapitals) {
-      filtered = removeWordsWithCapitals(filtered);
-    }
-    return filtered;
+    
+    return [];
   }, [sortedDict, hideDuplicates, dedupe, noCapitals]);
 
   const candidateWords = useMemo((): string[] => {
-    if (wordLength === 0 || candidateLetters.length === 0 || filteredDict.length == 0) {
+    if (wordLength > 0 && candidateLetters.length > 0 && filteredDict.length > 0) {
+      const regex = buildRegexFromCandidates(wordLength, candidateLetters, [...mustInclude]);
+      return filteredDict.filter(word => regex.test(word.toUpperCase()));
+    } else {
       return [];
     }
-
-    const regex = buildRegexFromCandidates(wordLength, candidateLetters, [...mustInclude]);
-    const matches = filteredDict.filter(word => regex.test(word.toUpperCase()));
-
-    return matches;
   }, [filteredDict, candidateLetters, mustInclude, wordLength]);
 
   const wordCount = candidateWords.length;
   const title = `${wordCount.toLocaleString()} words`; 
-  const canDisplayWordList = languageCode && wordLength !== 0;
+  const canDisplayWordList = languageCode && wordLength !== 0 && !loadingError;
   const oneOptionMissing = (languageCode && wordLength === 0) || (!languageCode && wordLength > 0);
 
   return (
-    <Fragment>
+    <>
       {canDisplayWordList && (
         <Panel id="word-list-panel" title={title} isOpen={isPanelOpen} onToggle={() => setIsPanelOpen(!isPanelOpen)}>
           {hideDuplicates && mustInclude.size > 0 && (
@@ -153,12 +158,19 @@ export const WordListPanel: FC = () => {
         </Panel>
       )}
 
-      {!canDisplayWordList && oneOptionMissing && (
+      {!canDisplayWordList && oneOptionMissing && !loadingError && (
         <div className="msg">
           <div className="warning">{"You need to select both a language and a word length to view the word list"}</div>
         </div>
       )}
-    </Fragment>
+
+      {loadingError && (
+        <div className="msg">
+          <div className="error">{loadingError}</div>
+        </div>
+      )}
+
+    </>
   );
 };
 

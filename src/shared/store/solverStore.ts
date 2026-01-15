@@ -19,7 +19,7 @@ interface SolverState {
   // State vars only set by the store, but used by the app
   allLettersEntered: boolean;
   candidateLetters: CandidateLetter[];
-  mustInclude: Set<string>;          // letters that we know must be in hte word (rightPlace or wrongPlace)
+  mustInclude: Set<string>;       // letters that we know must be in the word (rightPlace or wrongPlace)
   wordFound: boolean;             // set to true when user reached the solution
 
   // Actions to update state vars

@@ -62,4 +62,3 @@ export const qwertyKeyboard: string[][] = [
   ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
   [ENTER, 'Z', 'X', 'C', 'V', 'B', 'N', 'M', BACKSPACE],
 ];
-

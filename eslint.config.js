@@ -43,8 +43,6 @@ export default defineConfig([
       ...reactHooks.configs.recommended.rules,
 
       "react-refresh/only-export-components": "warn",
-
-      // your preferences
       "react-hooks/exhaustive-deps": "warn",
       "react-hooks/rules-of-hooks": "error",
       "react/react-in-jsx-scope": "off",
@@ -62,6 +60,8 @@ export default defineConfig([
           varsIgnorePattern: "^_",
         },
       ],
+      "func-call-spacing": ["error", "never"],
+      "eol-last": ["error", "always"],
     },
   },
 ]);
