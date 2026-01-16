@@ -20,7 +20,7 @@ export type LetterColors = {
   id: number;
   colorSet: GameColors;
 } & {
-  [_K in LetterStatus]: string; // AEG added underscore to please the linter
+  [_K in LetterStatus]: string;
 };
 
 export type GridCell = {

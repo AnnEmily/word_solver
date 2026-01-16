@@ -1,4 +1,5 @@
 import { FC, Fragment, useEffect, useMemo, useState } from "react";
+import { useInView } from 'react-intersection-observer';
 import { useShallow } from 'zustand/shallow';
 import clsx from "clsx";
 
@@ -10,19 +11,22 @@ import { LanguageCode } from "../../shared/types";
 const dictionaries = import.meta.glob('../../dico/*/*.js');
 
 export const WordListPanel: FC = () => {
+  const [ref, inView] = useInView({ threshold: 0 });
+
   // States for inner control
   const [hideDuplicates, setHideDuplicates] = useState<boolean>(true);
   const [dedupe, setDedupe] = useState<boolean>(true);
-  const [noCapitals, setNoCapitals] = useState<boolean>(true);
+  const [noCapitals, _setNoCapitals] = useState<boolean>(true);
 
   // States to/from the store
-  const { candidateLetters, languageCode, mustInclude, setWord, wordConfirmed, wordLength } = useSolverStore(useShallow(state => ({
+  const { candidateLetters, languageCode, mustInclude, setWord, wordConfirmed, wordLength, setWordListInView } = useSolverStore(useShallow(state => ({
     candidateLetters: state.candidateLetters,
     languageCode: state.languageCode,
     mustInclude: state.mustInclude,
     setWord: state.setWord,
     wordConfirmed: state.wordConfirmed,
     wordLength: state.wordLength,
+    setWordListInView: state.setWordListInView,
   })));
 
   // States from file loading
@@ -64,6 +68,10 @@ export const WordListPanel: FC = () => {
     }
   }, [languageCode, wordLength]);
 
+  useEffect(() => {
+    setWordListInView(inView);
+  }, [inView, setWordListInView]);
+
   const handleWordClick = (word: string) => {
     if (!wordConfirmed) {
       setWord(word.split('').map(letter => ({ symbol: letter.toUpperCase(), status: null })));
@@ -103,17 +111,17 @@ export const WordListPanel: FC = () => {
   }, [filteredDict, candidateLetters, mustInclude, wordLength]);
 
   const wordCount = candidateWords.length;
-  const title = `${wordCount.toLocaleString()} words`;
+  const title = `Candidate words (${wordCount.toLocaleString()})`;
   const canDisplayWordList = languageCode && wordLength !== 0 && !isLoading && !loadingError;
 
   return (
     <>
       {canDisplayWordList && (
-        // <Panel id="word-list-panel" title={title} isOpen={isPanelOpen} onToggle={() => setIsPanelOpen(!isPanelOpen)}>
         <div id="word-list-panel" style={{ border: '2px solid white', flexGrow: '.92' }}>
-          <div style={{ marginBottom: '12px' }}>{title}</div>
+          <div className="panel-title" style={{ marginBottom: '12px' }}>{title}</div>
+
           {hideDuplicates && mustInclude.size > 0 && (
-            <div className="msg" style={{ alignItems: 'flex-start' }}>
+            <div className="msg" style={{ alignItems: 'flex-start', height: '20px' }}>
               <div className="warning">{"The 'No repeated letter' filter is active - so the word you try to guess might not be listed below"}</div>
             </div>
           )}
@@ -125,11 +133,11 @@ export const WordListPanel: FC = () => {
                 checked={hideDuplicates}
                 onToggle={() => setHideDuplicates(!hideDuplicates)}
               />
-              <OptionCheckbox
+              {/* <OptionCheckbox
                 label="No capital letters"
                 checked={noCapitals}
                 onToggle={() => setNoCapitals(!noCapitals)}
-              />
+              /> */}
               <OptionCheckbox
                 label="No similar words"
                 checked={dedupe}
@@ -138,7 +146,7 @@ export const WordListPanel: FC = () => {
             </div>
           </div>
 
-          <div className="word-list">
+          <div className="word-list" ref={ref}>
             {candidateWords.map((word, index) => {
               const wordClass = clsx("word", !wordConfirmed && "clickable");
               return (

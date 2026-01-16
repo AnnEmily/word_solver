@@ -15,6 +15,7 @@ interface SolverState {
   statusesConfirmed: boolean;     // set to true when user set the status of each letter in word and clicked DONE
   word: Word;                     // the active word, whose letters are being entered
   wordConfirmed: boolean;         // set to true after user entered all letters and hit ENTER
+  wordListInView: boolean;
 
   // State vars only set by the store, but used by the app
   allLettersEntered: boolean;
@@ -31,6 +32,7 @@ interface SolverState {
   setWord: (_letters: Word) => void;
   setLetter: (_letter: string) => void;
   setWordConfirmed: () => void;
+  setWordListInView: (_inView: boolean) => void;
   
   resetSolver: () => void;
 }
@@ -49,12 +51,13 @@ export const useSolverStore = create<SolverState>(set => ({
   wordConfirmed: false,
   wordFound: false,
   wordLength: 0,
+  wordListInView: false,
 
   // Actions
   setLanguageCode: code => set({ languageCode: code }),
   setColorSet: colorSet => set({ colorSet }),
   
-  setWordLength: len => 
+  setWordLength: len =>
     set({
     wordLength: len,
     word: getEmptyWord(len),
@@ -62,6 +65,7 @@ export const useSolverStore = create<SolverState>(set => ({
     activeCellIndex: 0,
   }),
 
+  setWordListInView: inView => set({ wordListInView: inView }),
   setActiveCellIndex: index => set({ activeCellIndex: index }),
   
   setLetter: letter => {

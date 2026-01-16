@@ -24,11 +24,11 @@
 
 .panel-title {
   font-weight: bold;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
 }
 
 .panel {
-  padding: 0px 16px;
+  padding: 0px 8px;
   border-radius: 8px;
 
   &.dark {
@@ -179,11 +179,6 @@
   }
 }
 
-/* Keyboard styles */
-.keyboard {
-  /* margin-top: 16px; */
-}
-
 .keyrow {
   display: flex;
   justify-content: center;
@@ -259,6 +254,9 @@
     justify-content: space-between;
     align-items: center;
 
+    & .MuiFormControlLabel-root .MuiFormControlLabel-label {
+      font-size: 0.89rem;
+    }
   }
 
   & .word-list {
