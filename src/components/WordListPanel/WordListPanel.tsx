@@ -4,7 +4,6 @@ import clsx from "clsx";
 
 import { OptionCheckbox } from "./OptionCheckbox";
 import { buildRegexFromCandidates, dedupeIgnoringDiacriticsAndCase, filterDuplicatedLetters, removeWordsWithCapitals } from "./utils";
-import { Panel } from "../../shared/components";
 import { useSolverStore } from "../../shared/store";
 import { LanguageCode } from "../../shared/types";
 
@@ -12,7 +11,6 @@ const dictionaries = import.meta.glob('../../dico/*/*.js');
 
 export const WordListPanel: FC = () => {
   // States for inner control
-  const [isPanelOpen, setIsPanelOpen] = useState<boolean>(true);
   const [hideDuplicates, setHideDuplicates] = useState<boolean>(true);
   const [dedupe, setDedupe] = useState<boolean>(true);
   const [noCapitals, setNoCapitals] = useState<boolean>(true);
@@ -107,14 +105,15 @@ export const WordListPanel: FC = () => {
   const wordCount = candidateWords.length;
   const title = `${wordCount.toLocaleString()} words`;
   const canDisplayWordList = languageCode && wordLength !== 0 && !isLoading && !loadingError;
-  const oneOptionMissing = (languageCode && wordLength === 0) || (!languageCode && wordLength > 0);
 
   return (
     <>
       {canDisplayWordList && (
-        <Panel id="word-list-panel" title={title} isOpen={isPanelOpen} onToggle={() => setIsPanelOpen(!isPanelOpen)}>
+        // <Panel id="word-list-panel" title={title} isOpen={isPanelOpen} onToggle={() => setIsPanelOpen(!isPanelOpen)}>
+        <div id="word-list-panel" style={{ border: '2px solid white', flexGrow: '.92' }}>
+          <div style={{ marginBottom: '12px' }}>{title}</div>
           {hideDuplicates && mustInclude.size > 0 && (
-            <div className="msg" style={{ alignItems: 'flex-start', marginTop: '15px' }}>
+            <div className="msg" style={{ alignItems: 'flex-start' }}>
               <div className="warning">{"The 'No repeated letter' filter is active - so the word you try to guess might not be listed below"}</div>
             </div>
           )}
@@ -144,27 +143,20 @@ export const WordListPanel: FC = () => {
               const wordClass = clsx("word", !wordConfirmed && "clickable");
               return (
                 <Fragment key={index}>
-                  <span className={wordClass} onDoubleClick={() => handleWordClick(word)}>
+                  <span className={wordClass} onClick={() => handleWordClick(word)}>
                     {word}
                   </span>
                   <span>
-                    {/* Add separator after all but the last word */}
                     {index < candidateWords.length - 1 && '-'}
                   </span>
                 </Fragment>
               );
             })}
           </div>
-        </Panel>
+        </div>
       )}
 
-      {/* AEG {!canDisplayWordList && oneOptionMissing && !loadingError && (
-        <div className="msg">
-          <div className="warning">{"You need to select both a language and a word length to view the word list"}</div>
-        </div>
-      )} */}
-
-      {isLoading  && (
+      {isLoading && (
         <div className="msg">
           <div className="info" style={{ marginBottom: '10px' }}>{"Loading dictionary..."}</div>
           <div className="loader" />
