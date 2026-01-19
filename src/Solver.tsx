@@ -3,7 +3,7 @@ import clsx from "clsx";
 
 import { useTheme } from "./shared/theme/useTheme";
 
-import { Grid, Keyboard, SettingsPanel, TopBar, WordListPanel } from "./components";
+import { GridPanel, SettingsPanel, TopBar, WordListPanel } from "./components";
 import './Solver.css';
 
 export const Solver: FC = () => {
@@ -14,8 +14,7 @@ export const Solver: FC = () => {
     <div id="solver" className={className}>
       <TopBar />
       <SettingsPanel />
-      <Grid />
-      <Keyboard />
+      <GridPanel />
       <WordListPanel />
     </div>
   );

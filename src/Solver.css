@@ -30,6 +30,7 @@
 .panel {
   padding: 0px 8px;
   border-radius: 8px;
+  margin-bottom: 16px;
 
   &.dark {
     background-color: #1D2226;
@@ -101,8 +102,6 @@
 }
 
 #settings-panel {
-  margin-bottom: 16px;
-
   & .controls {
     display: flex;
     flex-direction: row;
@@ -238,7 +237,6 @@
 
 /* Word list */
 #word-list-panel {
-  margin-top: 8px;
   border: 2px solid white;
   border-radius: 8px;
   padding: 8px;
@@ -287,10 +285,6 @@
 }
 
 /* Grid styles */
-.grid {
-  /* margin-top: 16px; */
-}
-
 .gridrow {
   display: flex;
   flex-direction: column;

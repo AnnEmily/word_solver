@@ -28,34 +28,6 @@ export const deriveMustInclude = (length: number, candidates: CandidateLetter[])
   return mustInclude;
 };
 
-// AEG remove
-// export const buildRegexFromCandidates = (
-//   wordLength: number,
-//   candidates: CandidateLetter[],
-//   mustInclude: string[] = []
-// ): RegExp => {
-
-//   const byIndex = Array.from({ length: wordLength }, (_, i) =>
-//     candidates.find(c => c.cellIndex === i)?.symbols ?? []
-//   );
-
-//   const body = byIndex.map(symbols => {
-//     if (symbols.length === 0) return '.';
-//     if (symbols.length === 1) return symbols[0];
-//     return `[${symbols.join('')}]`;
-//   }).join('');
-
-//   if (mustInclude.length > 0) {
-//     const lookaheads = mustInclude
-//       .map(l => `(?=.*${l})`)
-//       .join('');
-
-//     return new RegExp(`^${lookaheads}${body}$`);
-//   }
-
-//   return new RegExp(`^${body}$`);
-// };
-
 const expandSymbol = (symbol: string): string => {
   const lower = symbol.toLowerCase();
   const variants = DIACRITIC_MAP[lower];
@@ -66,6 +38,7 @@ const expandSymbol = (symbol: string): string => {
 
   return `[${variants}${variants.toUpperCase()}]`;
 };
+
 export const buildRegexFromCandidates = (
   wordLength: number,
   candidates: CandidateLetter[],
@@ -118,23 +91,6 @@ export const dedupeIgnoringDiacriticsAndCase = (
     return true; // keep first occurrence
   });
 };
-
-// export const filterDuplicatedLetters = (wordList: string[], allowDuplicated: boolean): string[] => {
-//   if (allowDuplicated) {
-//     return wordList;
-//   }
-
-//   const regexp = /(.)(?=.*\1)/;
-
-//   return wordList.filter((word) => {
-//     // Remove diacritics (é → e, ç → c, ñ → n, etc.)
-//     const normalized = word
-//       .normalize('NFD')
-//       .replace(/[\u0300-\u036f]/g, '');
-
-//     return !regexp.test(normalized);
-//   });
-// };
 
 export const filterDuplicatedLetters = (
   wordList: string[],

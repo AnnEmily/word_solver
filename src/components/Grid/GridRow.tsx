@@ -184,7 +184,7 @@ export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true, rowIn
       )}
 
       <div className="msg" style={{ display: isActiveWord ? 'inherit' : 'none' }}>
-        {!wordListInView && <div className="warning">{"Collapse the Seetings panel to view the word list"}</div>}
+        {!wordListInView && <div className="warning">{"Collapse some panel to view the word list"}</div>}
 
         {wordConfirmed && !colorSet && <div className="warning">{"You need to select a color set"}</div>}
 

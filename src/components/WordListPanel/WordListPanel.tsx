@@ -1,17 +1,20 @@
 import { FC, Fragment, useEffect, useMemo, useState } from "react";
 import { useInView } from 'react-intersection-observer';
 import { useShallow } from 'zustand/shallow';
+import { useSnackbar } from "notistack";
 import clsx from "clsx";
 
 import { OptionCheckbox } from "./OptionCheckbox";
 import { buildRegexFromCandidates, dedupeIgnoringDiacriticsAndCase, filterDuplicatedLetters, removeWordsWithCapitals } from "./utils";
 import { useSolverStore } from "../../shared/store";
 import { LanguageCode } from "../../shared/types";
+import { Zoom } from "@mui/material";
 
 const dictionaries = import.meta.glob('../../dico/*/*.js');
 
 export const WordListPanel: FC = () => {
   const [ref, inView] = useInView({ threshold: 0 });
+  const { enqueueSnackbar } = useSnackbar();
 
   // States for inner control
   const [hideDuplicates, setHideDuplicates] = useState<boolean>(true);
@@ -75,10 +78,16 @@ export const WordListPanel: FC = () => {
   const handleWordClick = (word: string) => {
     if (!wordConfirmed) {
       setWord(word.split('').map(letter => ({
-        // Make sure to remove diacritics
+        // Make sure to remove diacritics that are present in the word list
         symbol: letter.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
         status: null,
       })));
+      enqueueSnackbar('Word copied to the grid', {
+        autoHideDuration: 2000,
+        TransitionComponent: Zoom,
+        anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
+        variant: 'success',
+      });
     }
   };
 
