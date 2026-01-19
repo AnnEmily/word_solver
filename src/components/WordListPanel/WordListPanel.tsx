@@ -74,7 +74,11 @@ export const WordListPanel: FC = () => {
 
   const handleWordClick = (word: string) => {
     if (!wordConfirmed) {
-      setWord(word.split('').map(letter => ({ symbol: letter.toUpperCase(), status: null })));
+      setWord(word.split('').map(letter => ({
+        // Make sure to remove diacritics
+        symbol: letter.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
+        status: null,
+      })));
     }
   };
 

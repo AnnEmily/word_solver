@@ -53,6 +53,17 @@ export const ENTER = '⏎';
 export const BACKSPACE = '⌫';
 export const EMPTY_SYMBOL = "";
 
+export const DIACRITIC_MAP: Record<string, string> = {
+  a: 'aàáâãäåā',
+  c: 'cç',
+  e: 'eèéêëē',
+  i: 'iìíîïī',
+  n: 'nñ',
+  o: 'oòóôõöō',
+  u: 'uùúûüū',
+  y: 'yÿ',
+};
+
 export const alphabet = Array.from({ length: 26 }, (_, i) =>
   String.fromCharCode(65 + i) // uppercase letters
 );

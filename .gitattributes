@@ -1,0 +1,3 @@
+// Ignore followinfg folders in file statistics
+doc/**/*.* linguist-generated
+src/dico/**/*.* linguist-generated

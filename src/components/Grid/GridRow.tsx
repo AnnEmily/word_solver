@@ -148,6 +148,7 @@ export const GridRow: FC<GridRowProps> = ({ id, word, isActiveWord = true, rowIn
 
           return (
             <div key={index} className={cellClass} style={cellStyle} onClick={e => handleClickLetter(e, index)}>
+              {/* AEG Symbol might contain diacritics, but remove it for display */}
               {cell.symbol}
             </div>
           );

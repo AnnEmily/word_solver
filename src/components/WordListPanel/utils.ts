@@ -1,3 +1,4 @@
+import { DIACRITIC_MAP } from "../../shared/constants";
 import { CandidateLetter } from "../../shared/types";
 
 export const deriveMustInclude = (length: number, candidates: CandidateLetter[]): string[] => {
@@ -27,6 +28,44 @@ export const deriveMustInclude = (length: number, candidates: CandidateLetter[])
   return mustInclude;
 };
 
+// AEG remove
+// export const buildRegexFromCandidates = (
+//   wordLength: number,
+//   candidates: CandidateLetter[],
+//   mustInclude: string[] = []
+// ): RegExp => {
+
+//   const byIndex = Array.from({ length: wordLength }, (_, i) =>
+//     candidates.find(c => c.cellIndex === i)?.symbols ?? []
+//   );
+
+//   const body = byIndex.map(symbols => {
+//     if (symbols.length === 0) return '.';
+//     if (symbols.length === 1) return symbols[0];
+//     return `[${symbols.join('')}]`;
+//   }).join('');
+
+//   if (mustInclude.length > 0) {
+//     const lookaheads = mustInclude
+//       .map(l => `(?=.*${l})`)
+//       .join('');
+
+//     return new RegExp(`^${lookaheads}${body}$`);
+//   }
+
+//   return new RegExp(`^${body}$`);
+// };
+
+const expandSymbol = (symbol: string): string => {
+  const lower = symbol.toLowerCase();
+  const variants = DIACRITIC_MAP[lower];
+
+  if (!variants) {
+    return symbol; // b, d, f, etc.
+  }
+
+  return `[${variants}${variants.toUpperCase()}]`;
+};
 export const buildRegexFromCandidates = (
   wordLength: number,
   candidates: CandidateLetter[],
@@ -39,19 +78,22 @@ export const buildRegexFromCandidates = (
 
   const body = byIndex.map(symbols => {
     if (symbols.length === 0) return '.';
-    if (symbols.length === 1) return symbols[0];
-    return `[${symbols.join('')}]`;
+
+    const expanded = symbols.map(expandSymbol);
+
+    if (expanded.length === 1) return expanded[0];
+    return `(?:${expanded.join('|')})`;
   }).join('');
 
   if (mustInclude.length > 0) {
     const lookaheads = mustInclude
-      .map(l => `(?=.*${l})`)
+      .map(l => `(?=.*${expandSymbol(l)})`)
       .join('');
 
-    return new RegExp(`^${lookaheads}${body}$`);
+    return new RegExp(`^${lookaheads}${body}$`, 'u');
   }
 
-  return new RegExp(`^${body}$`);
+  return new RegExp(`^${body}$`, 'u');
 };
 
 export const dedupeIgnoringDiacriticsAndCase = (
@@ -77,20 +119,40 @@ export const dedupeIgnoringDiacriticsAndCase = (
   });
 };
 
-export const filterDuplicatedLetters = (wordList: string[], allowDuplicated: boolean): string[] => {
+// export const filterDuplicatedLetters = (wordList: string[], allowDuplicated: boolean): string[] => {
+//   if (allowDuplicated) {
+//     return wordList;
+//   }
+
+//   const regexp = /(.)(?=.*\1)/;
+
+//   return wordList.filter((word) => {
+//     // Remove diacritics (é → e, ç → c, ñ → n, etc.)
+//     const normalized = word
+//       .normalize('NFD')
+//       .replace(/[\u0300-\u036f]/g, '');
+
+//     return !regexp.test(normalized);
+//   });
+// };
+
+export const filterDuplicatedLetters = (
+  wordList: string[],
+  allowDuplicated: boolean
+): string[] => {
   if (allowDuplicated) {
-    return wordList;  
+    return wordList;
   }
 
-  const regexp = /(.)(?=.*\1)/;
+  const duplicatedLetterRegexp = /(.)(?=.*\1)/;
 
-  return wordList.filter((word) => {
-    // Remove diacritics (é → e, ç → c, ñ → n, etc.)
-    const normalized = word
+  return wordList.filter((originalWord) => {
+    const wordForTest = originalWord
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase(); // optional but usually a good idea
 
-    return !regexp.test(normalized);
+    return !duplicatedLetterRegexp.test(wordForTest);
   });
 };
 
