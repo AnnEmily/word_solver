@@ -21,6 +21,7 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Tools used
 
 - Framework: React
+- Components: MUI
 - State management: Zustand
 - Bundler: Vite
 - Linter: Eslint
