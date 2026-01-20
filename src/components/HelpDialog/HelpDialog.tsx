@@ -24,11 +24,11 @@ export const HelpDialog: FC<HelpDialogProps> = ({ onClose }) => {
       </IconButton>
 
       <DialogContent sx={{ paddingTop: 0 }}>
-        <Typography sx={{ marginBottom: '15px' }}>
+        <Typography sx={{ marginBottom: '6px' }}>
           {`
             This app will help you solve a word game by presenting you a list of words 
-            in the the chosen language. The word list will shrink little by little, as you enter
-            the results of each letter: in the right place, in the wrong place, or not included.
+            of selected length in the chosen language. The word list will shrink
+            little by little, as you enter the results of the guesses you tried.
           `}
         </Typography>
 
@@ -37,13 +37,13 @@ export const HelpDialog: FC<HelpDialogProps> = ({ onClose }) => {
             <ListItemText primary="Open your preferred game in another page and enter your word" />
           </ListItem>
           <ListItem>
-            <ListItemText primary="Return back here and enter the same word, with the results given in the game." />
+            <ListItemText primary="Return back here and enter the same word, and provide the results of the guess." />
           </ListItem>
         </List>
         <Typography>
           {`
-            You can enter a word by typing on the displayed keyboard, or click on a word
-            in the word list.
+            You can enter a word by typing on the displayed keyboard, or by clicking
+            on a word in the word list.
           `}
         </Typography>
       </DialogContent>
