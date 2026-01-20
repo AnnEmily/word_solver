@@ -18,7 +18,8 @@
   margin-top: 0px;
   margin-bottom: 6px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
   font-size: 1.5rem;
 }
 

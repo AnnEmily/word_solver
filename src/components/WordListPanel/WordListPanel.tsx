@@ -22,12 +22,13 @@ export const WordListPanel: FC = () => {
   const [noCapitals, _setNoCapitals] = useState<boolean>(true);
 
   // States to/from the store
-  const { candidateLetters, languageCode, mustInclude, setWord, wordConfirmed, wordLength, setWordListInView } = useSolverStore(useShallow(state => ({
+  const { candidateLetters, languageCode, mustInclude, setWord, wordConfirmed, wordFound, wordLength, setWordListInView } = useSolverStore(useShallow(state => ({
     candidateLetters: state.candidateLetters,
     languageCode: state.languageCode,
     mustInclude: state.mustInclude,
     setWord: state.setWord,
     wordConfirmed: state.wordConfirmed,
+    wordFound: state.wordFound,
     wordLength: state.wordLength,
     setWordListInView: state.setWordListInView,
   })));
@@ -76,7 +77,7 @@ export const WordListPanel: FC = () => {
   }, [inView, setWordListInView]);
 
   const handleWordClick = (word: string) => {
-    if (!wordConfirmed) {
+    if (!wordConfirmed && !wordFound) {
       setWord(word.split('').map(letter => ({
         // Make sure to remove diacritics that are present in the words list
         symbol: letter.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
@@ -161,7 +162,7 @@ export const WordListPanel: FC = () => {
 
           <div className="word-list" ref={ref}>
             {candidateWords.map((word, index) => {
-              const wordClass = clsx("word", !wordConfirmed && "clickable");
+              const wordClass = clsx("word", !wordConfirmed && !wordFound && "clickable");
               return (
                 <Fragment key={index}>
                   <span className={wordClass} onClick={() => handleWordClick(word)}>
