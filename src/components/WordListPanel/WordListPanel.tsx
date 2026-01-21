@@ -126,6 +126,7 @@ export const WordListPanel: FC = () => {
 
   const wordCount = candidateWords.length;
   const title = `Candidate words (${wordCount.toLocaleString()})`;
+  const wordClass = clsx("word", !wordConfirmed && !wordFound && "clickable");
   const canDisplayWordList = languageCode && wordLength !== 0 && !isLoading && !loadingError;
 
   return (
@@ -161,19 +162,11 @@ export const WordListPanel: FC = () => {
           </div>
 
           <div className="word-list" ref={ref}>
-            {candidateWords.map((word, index) => {
-              const wordClass = clsx("word", !wordConfirmed && !wordFound && "clickable");
-              return (
-                <Fragment key={index}>
-                  <span className={wordClass} onClick={() => handleWordClick(word)}>
-                    {word}
-                  </span>
-                  <span>
-                    {index < candidateWords.length - 1 && '-'}
-                  </span>
-                </Fragment>
-              );
-            })}
+            {candidateWords.map((word, index) => (
+              <span key={index} className={wordClass} onClick={() => handleWordClick(word)}>
+                {word}
+              </span>
+            ))}
           </div>
         </div>
       )}

@@ -265,12 +265,20 @@
     border-radius: 4px;
     overflow-y: scroll;
     height: -webkit-fill-available;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
 
     & .word {
       cursor: default;
-      padding: 3px 4px 3px 4px;
+      padding: 0px 4px 0px 4px;
       transition: background-color 0.3s ease-out;
       user-select: none;
+      line-height: 1.5;
+
+      /* &::after {
+        content: ' -';
+      } */
 
       &.clickable {
         cursor: pointer;
